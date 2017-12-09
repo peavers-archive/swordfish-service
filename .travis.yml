@@ -1,0 +1,59 @@
+sudo: required
+
+services:
+  - docker
+
+language: java
+
+jdk: oraclejdk8
+
+after_success:
+  - docker --version
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+  - eval $(aws ecr get-login --region $AWS_REGION)
+
+  # TAG
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
+
+  # CONFIG SERVICE
+  - export CONFIG=swordfish/config-service
+  - docker build -t $CONFIG:$COMMIT ./config-service
+  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$COMMIT
+  - docker push $AWS_ECS_BASE/$CONFIG:$COMMIT
+
+  # EDGE SERVICE
+  - export CONFIG=swordfish/edge-service
+  - docker build -t $CONFIG:$COMMIT ./edge-service
+  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$COMMIT
+  - docker push $AWS_ECS_BASE/$CONFIG:$COMMIT
+
+  # EUREKA SERVICE
+  - export CONFIG=swordfish/eureka-service
+  - docker build -t $CONFIG:$COMMIT ./eureka-service
+  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$COMMIT
+  - docker push $AWS_ECS_BASE/$CONFIG:$COMMIT
+
+  # INSTANCE SERVICE
+  - export CONFIG=swordfish/instance-service
+  - docker build -t $CONFIG:$COMMIT ./instance-service
+  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$COMMIT
+  - docker push $AWS_ECS_BASE/$CONFIG:$COMMIT
+
+  # NODE SERVICE
+  - export CONFIG=swordfish/node-service
+  - docker build -t $CONFIG:$COMMIT ./node-service
+  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$COMMIT
+  - docker push $AWS_ECS_BASE/$CONFIG:$COMMIT
+
+  # NOTIFICATION SERVICE
+  - export CONFIG=swordfish/notification-service
+  - docker build -t $CONFIG:$COMMIT ./notification-service
+  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$COMMIT
+  - docker push $AWS_ECS_BASE/$CONFIG:$COMMIT
+
+  # RESTORE SERVICE
+  - export CONFIG=swordfish/restore-service
+  - docker build -t $CONFIG:$COMMIT ./restore-service
+  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$COMMIT
+  - docker push $AWS_ECS_BASE/$CONFIG:$COMMIT
