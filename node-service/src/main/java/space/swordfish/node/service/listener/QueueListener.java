@@ -8,7 +8,7 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import space.swordfish.notifications.SwordfishNotification;
+import space.swordfish.node.service.service.NotificationService;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,10 +26,12 @@ public class QueueListener {
     private static final String QUEUE_NAME = "SnapshotRestoreQueue-i-0a2e6744e7ebc12b8";
 
     private final RestTemplate restTemplate;
+    private final NotificationService notificationService;
 
     @Autowired
-    public QueueListener(RestTemplate restTemplate) {
+    public QueueListener(RestTemplate restTemplate, NotificationService notificationService) {
         this.restTemplate = restTemplate;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -52,12 +54,12 @@ public class QueueListener {
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<byte[]> response = restTemplate.exchange(link, HttpMethod.GET, entity, byte[].class, "1");
 
-        SwordfishNotification.send("restore_event", "restore_info", "Node service downloading snapshot...");
+        notificationService.send("restore_event", "restore_info", "Node service downloading snapshot...");
 
         if (response.getStatusCode() == HttpStatus.OK) {
             try {
                 Files.write(Paths.get("/tmp/test.sspak"), response.getBody());
-                SwordfishNotification.send("restore_event", "restore_success", "Node service snapshot downloaded");
+                notificationService.send("restore_event", "restore_success", "Node service snapshot downloaded");
             } catch (Exception e) {
                 e.printStackTrace();
             }
