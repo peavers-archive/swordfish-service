@@ -26,42 +26,42 @@ after_success:
 
   # CONFIG SERVICE
   - export CONFIG=swordfish/config-service
-  - docker build -t $CONFIG:$COMMIT ./config-service
-  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker build -t $CONFIG ./config-service
+  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
 
   # EDGE SERVICE
   - export CONFIG=swordfish/edge-service
-  - docker build -t $CONFIG:$COMMIT ./edge-service
-  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker build -t $CONFIG ./edge-service
+  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
 
   # EUREKA SERVICE
   - export CONFIG=swordfish/eureka-service
-  - docker build -t $CONFIG:$COMMIT ./eureka-service
-  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker build -t $CONFIG ./eureka-service
+  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
 
   # INSTANCE SERVICE
   - export CONFIG=swordfish/instance-service
-  - docker build -t $CONFIG:$COMMIT ./instance-service
-  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker build -t $CONFIG ./instance-service
+  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
 
   # NODE SERVICE
   - export CONFIG=swordfish/node-service
-  - docker build -t $CONFIG:$COMMIT ./node-service
-  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker build -t $CONFIG ./node-service
+  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
 
   # NOTIFICATION SERVICE
   - export CONFIG=swordfish/notification-service
-  - docker build -t $CONFIG:$COMMIT ./notification-service
-  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker build -t $CONFIG ./notification-service
+  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
 
   # RESTORE SERVICE
   - export CONFIG=swordfish/restore-service
-  - docker build -t $CONFIG:$COMMIT ./restore-service
-  - docker tag $CONFIG:$COMMIT $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker build -t $CONFIG ./restore-service
+  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
