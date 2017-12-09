@@ -3,6 +3,7 @@ package space.swordfish.restore.service.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.jasminb.jsonapi.annotations.Id;
 import com.github.jasminb.jsonapi.annotations.Type;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,11 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StackEvent {
 
-    @Id
-    String id;
+	@Id
+	String id;
 
-    String instanceId;
-    String projectId;
-    String environment;
-    String mode;
+	String instanceId;
+	String projectId;
+	String environment;
+	String mode;
 }

@@ -1,16 +1,18 @@
 package space.swordfish.instance.service.domain;
 
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.amazonaws.services.ec2.model.GroupIdentifier;
 import com.amazonaws.services.ec2.model.Tag;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.jasminb.jsonapi.annotations.Type;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Represents one instance with data both from AWS and Swordfish users.
@@ -22,33 +24,33 @@ import java.util.List;
 @Type("instances")
 public class Instance {
 
-    @Id
-    @com.github.jasminb.jsonapi.annotations.Id
-    String id;
+	@Id
+	@com.github.jasminb.jsonapi.annotations.Id
+	String id;
 
-    Date created;
-    List<Tag> tags;
-    List<GroupIdentifier> securityGroupIds;
+	Date created;
+	List<Tag> tags;
+	List<GroupIdentifier> securityGroupIds;
 
-    boolean production;
-    boolean staticIp;
+	boolean production;
+	boolean staticIp;
 
-    String name;
-    String description;
-    String instanceType;
-    String imageId;
-    String keyName;
-    String subnetId;
-    String instanceId;
-    String state;
-    String publicIp;
-    String privateIp;
-    String defaultSecurityGroupIds = "sg-47284c22";
+	String name;
+	String description;
+	String instanceType;
+	String imageId;
+	String keyName;
+	String subnetId;
+	String instanceId;
+	String state;
+	String publicIp;
+	String privateIp;
+	String defaultSecurityGroupIds = "sg-47284c22";
 
-    String swordfishCommand;
+	String swordfishCommand;
 
-    String userToken;
-    String userId;
-    String userName;
-    String userPicture;
+	String userToken;
+	String userId;
+	String userName;
+	String userPicture;
 }

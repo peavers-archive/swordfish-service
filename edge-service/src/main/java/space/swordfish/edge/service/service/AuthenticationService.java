@@ -4,8 +4,8 @@ import org.springframework.http.HttpEntity;
 
 public interface AuthenticationService {
 
-    HttpEntity<String> addAuthenticationHeader();
+	HttpEntity<String> addAuthenticationHeader();
 
-    String getCurrentToken();
+	String getCurrentToken();
 
 }

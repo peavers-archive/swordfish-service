@@ -3,6 +3,7 @@ package space.swordfish.restore.service.domain;
 import com.github.jasminb.jsonapi.annotations.Id;
 import com.github.jasminb.jsonapi.annotations.Links;
 import com.github.jasminb.jsonapi.annotations.Type;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,16 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Snapshot {
 
-    @Id
-    String id;
+	@Id
+	String id;
 
-    String created;
-    String mode;
-    String size;
-    String stackId;
-    String channel;
+	String created;
+	String mode;
+	String size;
+	String stackId;
+	String channel;
 
-    @Links
-    com.github.jasminb.jsonapi.Links links;
+	@Links
+	com.github.jasminb.jsonapi.Links links;
 
 }
