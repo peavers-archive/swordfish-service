@@ -120,3 +120,4 @@ local.properties
 docker-compose.yml
 /**/deploy.sh
 /**/build
+/**/out
