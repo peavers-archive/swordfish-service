@@ -1,0 +1,10 @@
+rootProject.name = 'swordfish-root'
+
+include 'config-service'
+include 'edge-service'
+include 'eureka-service'
+include 'instance-service'
+include 'node-service'
+include 'restore-service'
+include 'notification-service'
+include 'snapshot-service'

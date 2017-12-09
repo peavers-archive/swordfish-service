@@ -1,0 +1,15 @@
+jar {
+    baseName = 'node-service'
+}
+
+dependencies {
+    compile('org.springframework.cloud:spring-cloud-starter-config')
+    compile('org.springframework.cloud:spring-cloud-starter-eureka')
+    compile('org.springframework.cloud:spring-cloud-starter-aws')
+    compile('org.springframework.cloud:spring-cloud-aws-messaging')
+
+    compile('org.springframework.boot:spring-boot-starter-web')
+
+    compile('com.github.peavers:space.swordfish.notifications:build-master-2017-12-01-5')
+
+}

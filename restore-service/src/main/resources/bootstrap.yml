@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: restore-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
+
+# Docker configuration
+---
+spring:
+  profiles: docker
+  cloud:
+    config:
+      uri: http://config-service:8888
