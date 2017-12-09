@@ -11,7 +11,7 @@ buildscript {
     }
 }
 
-allprojects {
+subprojects {
     buildscript {
         ext {
             springBootVersion = '1.5.9'

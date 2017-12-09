@@ -121,3 +121,5 @@ docker-compose.yml
 /**/deploy.sh
 /**/build
 /**/out
+
+swordfish-root.iml
