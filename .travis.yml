@@ -15,7 +15,15 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+before_script:
+  - chmod +x gradlew
+script:
+  - ./gradlew check
+  - ./gradlew codeCoverageReport
+
 after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
   - docker --version
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
