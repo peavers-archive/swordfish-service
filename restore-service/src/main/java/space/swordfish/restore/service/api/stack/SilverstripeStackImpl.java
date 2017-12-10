@@ -9,11 +9,14 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class SilverstripeStackImpl implements SilverstripeStack {
 
 	@Value("${silverstripe.dashHost}")
-	private static String HOST;
+	private String HOST;
 
 	private final RestTemplate restTemplate;
 

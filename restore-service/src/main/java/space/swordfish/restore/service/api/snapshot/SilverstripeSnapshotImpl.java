@@ -16,7 +16,7 @@ import space.swordfish.restore.service.domain.StackEvent;
 public class SilverstripeSnapshotImpl implements SilverstripeSnapshot {
 
 	@Value("${silverstripe.dashHost}")
-	private static String HOST;
+	private String HOST;
 
 	private final RestTemplate restTemplate;
 

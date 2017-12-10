@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class SilverstripeLockImpl implements SilverstripeLock {
 
 	@Value("${silverstripe.dashHost}")
-	private static String HOST;
+	private String HOST;
 
 	private final RestTemplate restTemplate;
 

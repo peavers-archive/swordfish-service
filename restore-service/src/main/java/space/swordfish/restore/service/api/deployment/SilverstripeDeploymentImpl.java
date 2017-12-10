@@ -16,7 +16,7 @@ import space.swordfish.restore.service.domain.DeploymentEvent;
 public class SilverstripeDeploymentImpl implements SilverstripeDeployment {
 
 	@Value("${silverstripe.dashHost}")
-	private static String HOST;
+	private String HOST;
 
 	private final RestTemplate restTemplate;
 
