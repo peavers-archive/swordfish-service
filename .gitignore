@@ -121,5 +121,5 @@ docker-compose.yml
 /**/deploy.sh
 /**/build
 /**/out
-
+/**/.DS_Store
 swordfish-root.iml
