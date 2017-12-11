@@ -11,6 +11,16 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "http://repo1.maven.org/maven2/" }
+    }
+}
+
 subprojects {
     buildscript {
         ext {
@@ -30,14 +40,6 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-
-        maven { url "http://repo1.maven.org/maven2/" }
-    }
-
     ext {
         springCloudVersion = 'Edgware.RELEASE'
     }
@@ -51,32 +53,29 @@ subprojects {
 
         compile('io.springfox:springfox-swagger2:2.7.0')
         compile('io.springfox:springfox-swagger-ui:2.7.0')
+
+        compile 'com.github.peavers:swordfish-common:-SNAPSHOT'
     }
 
     dependencyManagement {
         imports {
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
             mavenBom 'org.springframework.cloud:spring-cloud-aws:1.2.1.RELEASE'
-            mavenBom "org.springframework.cloud:spring-cloud-consul-dependencies:1.2.1.RELEASE"
         }
     }
-}
 
-task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    task codeCoverageReport(type: JacocoReport) {
+        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
-    subprojects.each {
-        sourceSets it.sourceSets.main
+        subprojects.each {
+            sourceSets it.sourceSets.main
+        }
+
+        reports {
+            xml.enabled true
+            xml.destination "${buildDir}/reports/jacoco/report.xml"
+            html.enabled false
+            csv.enabled false
+        }
     }
-
-    reports {
-        xml.enabled true
-        xml.destination "${buildDir}/reports/jacoco/report.xml"
-        html.enabled false
-        csv.enabled false
-    }
-}
-
-codeCoverageReport.dependsOn {
-    subprojects*.test
 }

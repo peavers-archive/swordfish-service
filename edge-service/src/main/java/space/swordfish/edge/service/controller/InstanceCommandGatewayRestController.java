@@ -1,7 +1,9 @@
 package space.swordfish.edge.service.controller;
 
-import java.io.IOException;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
@@ -9,16 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jasminb.jsonapi.exceptions.DocumentSerializationException;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.edge.service.domain.Instance;
 import space.swordfish.edge.service.service.AuthenticationService;
-import space.swordfish.edge.service.service.JsonTransformService;
+
+import java.io.IOException;
+
 
 @Api(tags = "Instances Command")
 @Slf4j
@@ -28,6 +26,7 @@ public class InstanceCommandGatewayRestController {
 	private final QueueMessagingTemplate queueMessagingTemplate;
 	private final JsonTransformService jsonTransformService;
 	private final AuthenticationService authenticationService;
+
 	@Value("${queues.instanceEvents}")
 	private String queue;
 
@@ -55,7 +54,7 @@ public class InstanceCommandGatewayRestController {
 			this.queueMessagingTemplate.send(queue,
 					MessageBuilder.withPayload(payload).build());
 		}
-		catch (DocumentSerializationException | IOException e) {
+		catch (IOException e) {
 			log.error(e.getLocalizedMessage());
 		}
 
@@ -72,5 +71,4 @@ public class InstanceCommandGatewayRestController {
 
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
-
 }
