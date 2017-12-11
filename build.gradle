@@ -50,11 +50,7 @@ subprojects {
         compile('com.github.jasminb:jsonapi-converter:0.8')
         compile('org.projectlombok:lombok')
         compile('com.amazonaws:aws-java-sdk:1.11.236')
-
-        compile('io.springfox:springfox-swagger2:2.7.0')
-        compile('io.springfox:springfox-swagger-ui:2.7.0')
-
-        compile 'com.github.peavers:swordfish-common:-SNAPSHOT'
+        compile 'com.github.peavers:swordfish-common:cd9111eb5e'
     }
 
     dependencyManagement {
