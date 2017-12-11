@@ -17,9 +17,6 @@ eureka:
 ---
 spring:
   profiles: docker
-  cloud:
-    config:
-      uri: http://config-service:8888
 
 eureka:
   instance:
