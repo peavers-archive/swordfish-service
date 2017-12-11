@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/peavers/swordfish.svg?branch=master)](https://travis-ci.org/peavers/swordfish)
+[![Maintainability](https://api.codeclimate.com/v1/badges/e188e6e8833420cba06a/maintainability)](https://codeclimate.com/github/peavers/swordfish-service/maintainability)
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/peavers/swordfish/blob/master/LICENSE)
 
 # Swordfish 

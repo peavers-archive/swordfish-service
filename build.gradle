@@ -50,7 +50,7 @@ subprojects {
         compile('com.github.jasminb:jsonapi-converter:0.8')
         compile('org.projectlombok:lombok')
         compile('com.amazonaws:aws-java-sdk:1.11.236')
-        compile 'com.github.peavers:swordfish-common:cd9111eb5e'
+        compile 'com.github.peavers:swordfish-common:41cb906fa5'
     }
 
     dependencyManagement {
