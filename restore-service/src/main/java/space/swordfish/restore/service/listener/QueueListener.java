@@ -6,8 +6,8 @@ import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 import space.swordfish.common.json.services.JsonTransformService;
+import space.swordfish.common.queue.services.QueueMessageService;
 import space.swordfish.restore.service.domain.StackEvent;
-import space.swordfish.restore.service.service.QueueMessageService;
 import space.swordfish.restore.service.service.SilverstripeService;
 
 import java.util.concurrent.ExecutionException;
