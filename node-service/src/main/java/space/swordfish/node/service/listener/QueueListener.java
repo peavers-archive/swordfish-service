@@ -25,6 +25,7 @@ public class QueueListener {
 	private static final String QUEUE_NAME = "SnapshotRestoreQueue-i-0a2e6744e7ebc12b8";
 
 	private final RestTemplate restTemplate;
+
 	private final NotificationService notificationService;
 
 	@Autowired
