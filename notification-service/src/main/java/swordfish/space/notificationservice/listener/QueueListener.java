@@ -1,10 +1,11 @@
 package swordfish.space.notificationservice.listener;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.domain.Notification;
 import swordfish.space.notificationservice.services.PusherService;

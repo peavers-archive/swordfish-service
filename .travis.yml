@@ -25,21 +25,9 @@ after_success:
   # TAG
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
 
-  # CONFIG SERVICE
-  - export CONFIG=swordfish/config-service
-  - docker build -t $CONFIG ./config-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
-
   # EDGE SERVICE
   - export CONFIG=swordfish/edge-service
   - docker build -t $CONFIG ./edge-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
-
-  # EUREKA SERVICE
-  - export CONFIG=swordfish/eureka-service
-  - docker build -t $CONFIG ./eureka-service
   - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
   - docker push $AWS_ECS_BASE/$CONFIG:$TAG
 

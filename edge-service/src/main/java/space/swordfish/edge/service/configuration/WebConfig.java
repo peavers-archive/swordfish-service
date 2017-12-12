@@ -1,10 +1,10 @@
 package space.swordfish.edge.service.configuration;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-@Configuration
+@ConfigurationProperties
 public class WebConfig extends WebMvcConfigurerAdapter {
 
 	@Override

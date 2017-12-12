@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "repos": [
+    {
+      "name": "swordfish",
+      "url": "git@bitbucket.org:papa_c/config-repo.git",
+      "branches": [
+        "master"
+      ],
+      "hooks": [
+        {
+          "type": "polling",
+          "interval": "1"
+        }
+      ]
+    }
+  ]
+}

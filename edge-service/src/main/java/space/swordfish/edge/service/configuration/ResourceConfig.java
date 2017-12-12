@@ -1,7 +1,7 @@
 package space.swordfish.edge.service.configuration;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -10,7 +10,7 @@ import com.github.jasminb.jsonapi.ResourceConverter;
 import space.swordfish.edge.service.domain.Instance;
 import space.swordfish.edge.service.domain.StackEvent;
 
-@Configuration
+@ConfigurationProperties
 public class ResourceConfig {
 
 	@Bean

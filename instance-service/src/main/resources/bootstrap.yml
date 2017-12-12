@@ -2,9 +2,11 @@ spring:
   application:
     name: instance-service
   cloud:
-    config:
-      uri: http://localhost:8888
-      fail-fast: true
+    consul:
+      config:
+        enabled: true
+        prefix: swordfish/master/
+        format: FILES
 
 # Docker configuration
 ---
