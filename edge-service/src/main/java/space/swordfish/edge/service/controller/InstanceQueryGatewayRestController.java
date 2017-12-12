@@ -20,7 +20,7 @@ import space.swordfish.edge.service.service.AuthenticationService;
 @RestController
 public class InstanceQueryGatewayRestController {
 
-	private final static String SERVICE = "http://instance-service/instances";
+	private final static String SERVICE = "http://swordfish_instance-service/instances";
 	@LoadBalanced
 	private final RestTemplate restTemplate;
 	private final AuthenticationService authenticationService;
