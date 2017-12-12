@@ -1,18 +1,16 @@
 package space.swordfish.edge.service.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.github.jasminb.jsonapi.ResourceConverter;
-
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.json.services.JsonTransformServiceImpl;
 import space.swordfish.edge.service.domain.Instance;
 import space.swordfish.edge.service.domain.StackEvent;
 
-@ConfigurationProperties
+@Configuration
 public class JsonTransformConfig {
 
     @Bean

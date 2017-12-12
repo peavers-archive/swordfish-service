@@ -1,12 +1,5 @@
 package space.swordfish.instance.service.service;
 
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.util.Objects;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
@@ -18,10 +11,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import space.swordfish.instance.service.domain.TokenInput;
 import space.swordfish.instance.service.domain.TokenResponse;
+
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.util.Objects;
 
 @Slf4j
 @Service

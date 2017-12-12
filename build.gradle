@@ -24,9 +24,8 @@ allprojects {
 
 subprojects {
     buildscript {
-        ext {
-            springBootVersion = '1.5.9.RELEASE'
-        }
+        ext { springBootVersion = '1.5.9.RELEASE' }
+        ext { swordfishCommonVersion = 'e3917387df' }
     }
 
     apply plugin: 'java'
@@ -47,12 +46,11 @@ subprojects {
 
     dependencies {
         compile('org.springframework.boot:spring-boot-starter-actuator')
-        compile('org.springframework.cloud:spring-cloud-starter-consul-all')
+        compile('org.springframework.cloud:spring-cloud-starter-consul-config')
+        compile('org.springframework.cloud:spring-cloud-starter-consul-discovery')
 
-        compile('com.github.jasminb:jsonapi-converter:0.8')
         compile('org.projectlombok:lombok')
-        compile('com.amazonaws:aws-java-sdk:1.11.236')
-        compile "com.github.peavers:swordfish-common:-SNAPSHOT"
+        compile("com.github.peavers:swordfish-common:${swordfishCommonVersion}")
     }
 
     dependencyManagement {

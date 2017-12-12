@@ -1,12 +1,11 @@
 package space.swordfish.edge.service.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-
 import com.auth0.client.auth.AuthAPI;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties
+@Configuration
 public class AuthApiConfig {
 
 	@Value("${auth0.issuer}")

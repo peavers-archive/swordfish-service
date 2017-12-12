@@ -1,5 +1,8 @@
 package space.swordfish.edge.service.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.core.ParameterizedTypeReference;
@@ -9,10 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import space.swordfish.edge.service.service.AuthenticationService;
 
 @Slf4j
@@ -20,7 +19,7 @@ import space.swordfish.edge.service.service.AuthenticationService;
 @RestController
 public class InstanceQueryGatewayRestController {
 
-	private final static String SERVICE = "http://instance-service:9090/instances";
+	private final static String SERVICE = "http://instance-service/instances";
 	@LoadBalanced
 	private final RestTemplate restTemplate;
 	private final AuthenticationService authenticationService;

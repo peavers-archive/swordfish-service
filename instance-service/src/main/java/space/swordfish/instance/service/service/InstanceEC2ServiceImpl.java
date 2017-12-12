@@ -1,24 +1,22 @@
 package space.swordfish.instance.service.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.*;
 import com.amazonaws.waiters.WaiterHandler;
 import com.amazonaws.waiters.WaiterParameters;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.services.NotificationService;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service

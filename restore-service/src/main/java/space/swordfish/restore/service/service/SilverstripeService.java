@@ -1,10 +1,10 @@
 package space.swordfish.restore.service.service;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
 import space.swordfish.restore.service.domain.Stack;
 import space.swordfish.restore.service.domain.StackEvent;
+
+import java.util.List;
+import java.util.concurrent.Future;
 
 public interface SilverstripeService {
 

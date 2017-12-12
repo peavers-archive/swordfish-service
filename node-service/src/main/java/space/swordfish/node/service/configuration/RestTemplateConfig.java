@@ -1,9 +1,5 @@
 package space.swordfish.node.service.configuration;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +12,10 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.InterceptingClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class RestTemplateConfig {

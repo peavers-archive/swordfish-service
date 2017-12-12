@@ -5,10 +5,15 @@ spring:
     consul:
       config:
         enabled: true
-        prefix: swordfish/master/
+        prefix: swordfish/master/development
+        defaultContext: application
         format: FILES
 
 # Docker configuration
 ---
 spring:
   profiles: docker
+  cloud:
+    consul:
+      config:
+        prefix: swordfish/master/production
