@@ -18,39 +18,40 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
   - docker --version
-  - pip install --user awscli
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  
   - export PATH=$PATH:$HOME/.local/bin
-  - eval $(aws ecr get-login --region $AWS_REGION)
+  - export PROJECT=peavers
 
   # TAG
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
 
   # EDGE SERVICE
-  - export CONFIG=swordfish/edge-service
+  - export CONFIG=$PROJECT/edge-service
   - docker build -t $CONFIG ./edge-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
 
-  # INSTANCE SERVICE
-  - export CONFIG=swordfish/instance-service
-  - docker build -t $CONFIG ./instance-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
-
-  # NODE SERVICE
-  - export CONFIG=swordfish/node-service
-  - docker build -t $CONFIG ./node-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
-
-  # NOTIFICATION SERVICE
-  - export CONFIG=swordfish/notification-service
-  - docker build -t $CONFIG ./notification-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
-
-  # RESTORE SERVICE
-  - export CONFIG=swordfish/restore-service
-  - docker build -t $CONFIG ./restore-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
+#  # INSTANCE SERVICE
+#  - export CONFIG=$PROJECT/instance-service
+#  - docker build -t $CONFIG ./instance-service
+#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+#  - docker push $CONFIG:$TAG
+#
+#  # NODE SERVICE
+#  - export CONFIG=$PROJECT/node-service
+#  - docker build -t $CONFIG ./node-service
+#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+#  - docker push $CONFIG:$TAG
+#
+#  # NOTIFICATION SERVICE
+#  - export CONFIG=$PROJECT/notification-service
+#  - docker build -t $CONFIG ./notification-service
+#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+#  - docker push $CONFIG:$TAG
+#
+#  # RESTORE SERVICE
+#  - export CONFIG=$PROJECT/restore-service
+#  - docker build -t $CONFIG ./restore-service
+#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+#  - docker push $CONFIG:$TAG
