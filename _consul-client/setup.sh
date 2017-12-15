@@ -16,6 +16,13 @@ yum update -y && yum install -y \
 
 
 # =======================
+# Install docker compose (because it's useful for dev)
+# =======================
+curl -L https://github.com/docker/compose/releases/download/1.18.0-rc2/docker-compose-`uname -s`-`uname -m` | sudo tee /usr/local/bin/docker-compose > /dev/null
+chmod +x /usr/local/bin/docker-compose
+
+
+# =======================
 # Install Consul
 # =======================
 wget https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
