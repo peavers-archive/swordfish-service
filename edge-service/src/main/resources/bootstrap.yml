@@ -17,3 +17,5 @@ spring:
     consul:
       config:
         prefix: swordfish/master/production
+        host: 169.254.1.1
+        port: 8500
