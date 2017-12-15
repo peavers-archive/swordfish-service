@@ -32,8 +32,8 @@ after_success:
   # EDGE SERVICE
   - export CONFIG=$PROJECT/edge-service
   - docker build -t $CONFIG ./edge-service
-  - docker tag edge-service $CONFIG:$TAG
-  - docker push $CONFIG:$TAG
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG
 
 #  # INSTANCE SERVICE
 #  - export CONFIG=$PROJECT/instance-service
