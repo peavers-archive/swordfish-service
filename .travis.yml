@@ -24,7 +24,8 @@ after_success:
   - export PROJECT=peavers
 
   # TAG
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
+#  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
+  - export TAG=latest
 
   # EDGE SERVICE
   - export CONFIG=$PROJECT/edge-service
