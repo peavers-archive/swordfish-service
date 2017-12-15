@@ -20,42 +20,38 @@ after_success:
   - docker --version
   - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
   - export PATH=$PATH:$HOME/.local/bin
-#  - export PROJECT=peavers
+  - export PROJECT=peavers
 
   # TAG
 #  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
-#  - export TAG=latest
+  - export TAG=latest
 
   # EDGE SERVICE
-#  - export CONFIG=$PROJECT/edge-service
-#  - docker build -t $CONFIG ./edge-service
-#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
-#  - docker push $CONFIG
-
-  - docker build -t peavers/edge-service ./edge-service
-  - docker tag peavers/edge-service:latest peavers/edge-service:latest
-  - docker push peavers/edge-service:latest
+  - export CONFIG=$PROJECT/edge-service
+  - docker build -t $CONFIG ./edge-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
 
 #  # INSTANCE SERVICE
-#  - export CONFIG=$PROJECT/instance-service
-#  - docker build -t $CONFIG ./instance-service
-#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
-#  - docker push $CONFIG:$TAG
-#
+  - export CONFIG=$PROJECT/instance-service
+  - docker build -t $CONFIG ./instance-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
+
 #  # NODE SERVICE
-#  - export CONFIG=$PROJECT/node-service
-#  - docker build -t $CONFIG ./node-service
-#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
-#  - docker push $CONFIG:$TAG
-#
+  - export CONFIG=$PROJECT/node-service
+  - docker build -t $CONFIG ./node-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
+
 #  # NOTIFICATION SERVICE
-#  - export CONFIG=$PROJECT/notification-service
-#  - docker build -t $CONFIG ./notification-service
-#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
-#  - docker push $CONFIG:$TAG
-#
+  - export CONFIG=$PROJECT/notification-service
+  - docker build -t $CONFIG ./notification-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
+
 #  # RESTORE SERVICE
-#  - export CONFIG=$PROJECT/restore-service
-#  - docker build -t $CONFIG ./restore-service
-#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
-#  - docker push $CONFIG:$TAG
+  - export CONFIG=$PROJECT/restore-service
+  - docker build -t $CONFIG ./restore-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
