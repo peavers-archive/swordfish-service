@@ -19,21 +19,23 @@ after_success:
 
   - docker --version
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-
-
-
   - export PATH=$PATH:$HOME/.local/bin
-  - export PROJECT=peavers
+#  - export PROJECT=peavers
 
   # TAG
 #  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
-  - export TAG=latest
+#  - export TAG=latest
 
   # EDGE SERVICE
-  - export CONFIG=$PROJECT/edge-service
-  - docker build -t $CONFIG ./edge-service
-  - docker tag $CONFIG:$TAG $CONFIG:$TAG
-  - docker push $CONFIG
+#  - export CONFIG=$PROJECT/edge-service
+#  - docker build -t $CONFIG ./edge-service
+#  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+#  - docker push $CONFIG
+
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - docker build -t peavers/edge-service ./edge-service
+  - docker tag peavers/edge-service:latest peavers/edge-service:latest
+  - docker push peavers/edge-service:latest
 
 #  # INSTANCE SERVICE
 #  - export CONFIG=$PROJECT/instance-service
