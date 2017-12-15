@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Remember to set where your configuration files are saved...
-GIT_CONFIG_REPOSITORY=""
+GIT_CONFIG_REPOSITORY=${GIT_URL}
 
 # Gets the private ip of the server automatically
 PRIVATE_IP_ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)

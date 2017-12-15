@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set the IP of a server/cluster to joint here
-CONSUL_SERVER_IP_ADDRESS="52.65.218.32"
+CONSUL_SERVER_IP_ADDRESS=${SERVER_IP}
 
 # Gets the private ip of the server automatically
 PRIVATE_IP_ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
