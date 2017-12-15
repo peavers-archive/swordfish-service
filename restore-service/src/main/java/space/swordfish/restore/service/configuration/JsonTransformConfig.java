@@ -1,12 +1,10 @@
 package space.swordfish.restore.service.configuration;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.github.jasminb.jsonapi.ResourceConverter;
-
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.json.services.JsonTransformServiceImpl;
 import space.swordfish.common.notification.domain.Notification;
