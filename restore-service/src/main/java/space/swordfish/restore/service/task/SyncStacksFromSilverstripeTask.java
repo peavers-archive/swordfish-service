@@ -1,18 +1,16 @@
 package space.swordfish.restore.service.task;
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
 import space.swordfish.restore.service.domain.Stack;
 import space.swordfish.restore.service.repository.StackRepository;
 import space.swordfish.restore.service.service.SilverstripeService;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Slf4j
 @Component

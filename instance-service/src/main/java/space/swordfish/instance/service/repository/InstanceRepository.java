@@ -2,7 +2,6 @@ package space.swordfish.instance.service.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
 import space.swordfish.instance.service.domain.Instance;
 
 @RepositoryRestResource

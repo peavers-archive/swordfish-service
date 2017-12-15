@@ -18,51 +18,38 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
   - docker --version
-  - pip install --user awscli
+  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
   - export PATH=$PATH:$HOME/.local/bin
-  - eval $(aws ecr get-login --region $AWS_REGION)
 
   # TAG
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
 
-  # CONFIG SERVICE
-  - export CONFIG=swordfish/config-service
-  - docker build -t $CONFIG ./config-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
-
   # EDGE SERVICE
-  - export CONFIG=swordfish/edge-service
+  - export CONFIG=$PROJECT/edge-service
   - docker build -t $CONFIG ./edge-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
-
-  # EUREKA SERVICE
-  - export CONFIG=swordfish/eureka-service
-  - docker build -t $CONFIG ./eureka-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
 
   # INSTANCE SERVICE
-  - export CONFIG=swordfish/instance-service
+  - export CONFIG=$PROJECT/instance-service
   - docker build -t $CONFIG ./instance-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
 
   # NODE SERVICE
-  - export CONFIG=swordfish/node-service
+  - export CONFIG=$PROJECT/node-service
   - docker build -t $CONFIG ./node-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
 
   # NOTIFICATION SERVICE
-  - export CONFIG=swordfish/notification-service
+  - export CONFIG=$PROJECT/notification-service
   - docker build -t $CONFIG ./notification-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
 
   # RESTORE SERVICE
-  - export CONFIG=swordfish/restore-service
+  - export CONFIG=$PROJECT/restore-service
   - docker build -t $CONFIG ./restore-service
-  - docker tag $CONFIG:$TAG $AWS_ECS_BASE/$CONFIG:$TAG
-  - docker push $AWS_ECS_BASE/$CONFIG:$TAG
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG

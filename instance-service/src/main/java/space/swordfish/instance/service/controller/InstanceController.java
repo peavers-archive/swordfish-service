@@ -1,6 +1,5 @@
 package space.swordfish.instance.service.controller;
 
-import com.amazonaws.services.sqs.AmazonSQSAsync;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,45 +9,27 @@ import org.springframework.web.bind.annotation.*;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
-import space.swordfish.instance.service.service.Auth0Service;
-import space.swordfish.instance.service.service.AuthenticationService;
 
 @Slf4j
 @RestController
 @RequestMapping("/instances")
 public class InstanceController {
 
-    private final InstanceRepository instanceRepository;
-    private final JsonTransformService jsonTransformService;
-    private final QueueMessagingTemplate queueMessagingTemplate;
-    private final Auth0Service auth0Service;
-    private final AuthenticationService authenticationService;
+    @Autowired
+    private InstanceRepository instanceRepository;
+
+    @Autowired
+    private JsonTransformService jsonTransformService;
+
+    @Autowired
+    private QueueMessagingTemplate queueMessagingTemplate;
 
     @Value("${queues.instanceEvents}")
     private String queue;
 
-    @Autowired
-    public InstanceController(InstanceRepository instanceRepository,
-                              JsonTransformService jsonTransformService, AmazonSQSAsync amazonSqs,
-                              Auth0Service auth0Service, AuthenticationService authenticationService) {
-        this.instanceRepository = instanceRepository;
-        this.jsonTransformService = jsonTransformService;
-        this.queueMessagingTemplate = new QueueMessagingTemplate(amazonSqs);
-        this.auth0Service = auth0Service;
-        this.authenticationService = authenticationService;
-    }
-
     @GetMapping()
     public String findAll() {
         Iterable<Instance> instances = instanceRepository.findAll();
-
-        return jsonTransformService.writeList(instances);
-    }
-
-    @GetMapping("me")
-    public String findAllByUserId() {
-        Iterable<Instance> instances = instanceRepository.findAllByUserId(
-                auth0Service.getUserId(authenticationService.getCurrentToken()));
 
         return jsonTransformService.writeList(instances);
     }

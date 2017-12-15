@@ -1,5 +1,7 @@
 package space.swordfish.edge.service.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -9,9 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import space.swordfish.edge.service.service.AuthenticationService;
 
 @Api(tags = "Restore Query")

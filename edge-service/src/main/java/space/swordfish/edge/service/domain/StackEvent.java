@@ -2,7 +2,6 @@ package space.swordfish.edge.service.domain;
 
 import com.github.jasminb.jsonapi.annotations.Id;
 import com.github.jasminb.jsonapi.annotations.Type;
-
 import lombok.Data;
 
 @Type("stack-events")

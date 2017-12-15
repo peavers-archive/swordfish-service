@@ -31,9 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		log.info("Audience {}", audience);
-		log.info("Issuer {}", issuer);
-
 		httpSecurity.csrf().disable();
 		httpSecurity.cors();
 		httpSecurity.sessionManagement()

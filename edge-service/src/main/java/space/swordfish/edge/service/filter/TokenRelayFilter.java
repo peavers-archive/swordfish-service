@@ -1,11 +1,10 @@
 package space.swordfish.edge.service.filter;
 
-import java.util.Set;
-
-import org.springframework.stereotype.Component;
-
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 public class TokenRelayFilter extends ZuulFilter {

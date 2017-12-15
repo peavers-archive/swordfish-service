@@ -1,14 +1,12 @@
 package space.swordfish.edge.service.service;
 
+import com.auth0.spring.security.api.authentication.JwtAuthentication;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import com.auth0.spring.security.api.authentication.JwtAuthentication;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
