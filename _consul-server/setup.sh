@@ -144,6 +144,12 @@ docker logs git2consul
 
 
 # =======================
+# Start the Registrator (docker image)
+# =======================
+docker run -d -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator consul://169.254.1.1:8500
+
+
+# =======================
 # Done, so output Consul logs
 # =======================
 journalctl -fu consul

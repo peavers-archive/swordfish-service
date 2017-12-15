@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set the IP of a server/cluster to joint here
-CONSUL_SERVER_IP_ADDRESS=""
+CONSUL_SERVER_IP_ADDRESS="52.65.218.32"
 
 # Gets the private ip of the server automatically
 PRIVATE_IP_ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
@@ -116,6 +116,12 @@ cat <<EOF > /etc/environment
 CONSUL_HTTP_ADDR=169.254.1.1:8500
 CONSUL_RPC_ADDR=169.254.1.1:8400
 EOF
+
+
+# =======================
+# Start the Registrator (docker image)
+# =======================
+docker run -d -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator consul://169.254.1.1:8500
 
 
 # =======================
