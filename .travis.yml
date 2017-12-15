@@ -19,7 +19,9 @@ after_success:
 
   - docker --version
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-  
+
+
+
   - export PATH=$PATH:$HOME/.local/bin
   - export PROJECT=peavers
 
@@ -30,7 +32,7 @@ after_success:
   # EDGE SERVICE
   - export CONFIG=$PROJECT/edge-service
   - docker build -t $CONFIG ./edge-service
-  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker tag edge-service $CONFIG:$TAG
   - docker push $CONFIG:$TAG
 
 #  # INSTANCE SERVICE
