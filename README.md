@@ -13,18 +13,11 @@ Makes use of Spring Cloud and Emberjs to create a simple way for developers to c
 ## Services
 A list of the servers in alphabetical order and the basic tasks they preform
 
-### Config Service
-Simple Spring Cloud config service, responsible for distributing configuration files to all other services. 
-
 ### Edge Service
 Zuul gateway where all requests from clients (browsers etc) come into. The Edge Service is responsible for distributing
 those requests to all other services. I've implemented this in a CQRS manner using AWS SQS. POST/PATCH/DELETE commands are
 sent through to a queue where the relevant services are listening and take action. GET requests are routeed straight through
 to their relevant service.  
-
-### Eureka Service
-Eureka looks after discovery for all services. This allows us to simply ask for `http://instance-service` in the gateway and 
-one will be returned. We don't need to know where in the cluster, or even what port it's running on. 
 
 ### Instance Service
 Handles the bulk of the work on AWS when it comes to CRUD operations of EC2 instances.  
