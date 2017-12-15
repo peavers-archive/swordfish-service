@@ -53,6 +53,7 @@ EOF
 systemctl daemon-reload
 systemctl restart systemd-networkd
 
+
 # =======================
 # Configure consul
 # =======================
