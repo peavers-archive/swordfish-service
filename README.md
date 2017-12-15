@@ -33,3 +33,14 @@ send a user an email, post to slack etc.
 ### Restore Service 
 Interfaces with Silverstripes Dash application to retrieve a list of stacks that belong to you, along with making calls
 to create new snapshots. 
+
+## Docker
+Each service is built in Dockerhub and can be ran (assuming consul is setup) with the following
+```
+docker run -d --name=notification-service \
+ -e CONSUL_HTTP_ADDR=$CONSUL_HTTP_ADDR \
+ -e SPRING_PROFILES_ACTIVE=docker \
+ -e SPRING_CLOUD_CONSUL_HOST=$CONSUL_HTTP_ADDR \
+ -e SPRING_CLOUD_CONSUL_PORT=8500 \
+ --dns 169.254.1.1 -P peavers/notification-service
+```

@@ -31,13 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable();
-		httpSecurity.cors();
 		httpSecurity.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
 		JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity).csrf()
-				.disable().authorizeRequests().anyRequest().authenticated();
+				.disable().authorizeRequests().antMatchers("/health").permitAll();
+
 	}
 
 	@Bean
