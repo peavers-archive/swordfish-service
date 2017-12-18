@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  instance-service:
+    container_name: instance-service
+    image: peavers/instance-service
+    restart: always
+    ports:
+      - 8010:8010
+    environment:
+    - TZ=Pacific/Auckland
+    - SPRING_PROFILES_ACTIVE=docker
+    - SPRING_CLOUD_CONSUL_HOST=$CONSUL_HTTP_ADDR
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
