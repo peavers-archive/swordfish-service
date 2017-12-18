@@ -19,6 +19,29 @@ those requests to all other services. I've implemented this in a CQRS manner usi
 sent through to a queue where the relevant services are listening and take action. GET requests are routeed straight through
 to their relevant service.  
 
+#### Creating Certificates for edge-service
+HTTPS should be used when talking ot the edge service. This is super easy thanks to LetsEncrypt
+
+```
+docker create \
+  --cap-add=NET_ADMIN \
+  --name=letsencrypt \
+  -v ~/letsencrypt:/config \
+  -e PGID=1000 -e PUID=1000  \
+  -e EMAIL= \
+  -e ONLY_SUBDOMAINS=true \
+  -e URL= \
+  -e SUBDOMAINS= \
+  -p 443:443 \
+  -e TZ=Pacific/Auckland \
+  linuxserver/letsencrypt
+```
+
+That will give you a nice clean cert to convert using 
+```
+openssl pkcs12 -export -in fullchain.pem -inkey privkey.pem -out swordfish-key.p12 -name tomcat
+```
+
 ### Instance Service
 Handles the bulk of the work on AWS when it comes to CRUD operations of EC2 instances.  
 
