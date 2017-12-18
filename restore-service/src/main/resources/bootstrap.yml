@@ -8,6 +8,9 @@ spring:
         prefix: swordfish/master/development
         defaultContext: application
         format: FILES
+      discovery:
+        instance-id: ${spring.application.name}
+        prefer-ip-address: true
 
 # Docker configuration
 ---
