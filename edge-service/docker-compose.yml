@@ -6,9 +6,10 @@ services:
     image: peavers/edge-service
     restart: always
     volumes:
-      - /home/ec2-user/letsencrypt/keys/letsencrypt:/etc/letsencrypt/live/swordfish.space/
+      - /home/ec2-user/letsencrypt/keys/letsencrypt:/etc/letsencrypt/live/
     ports:
       - 443:8443
+      - 8443:8443
     environment:
     - TZ=Pacific/Auckland
     - SPRING_PROFILES_ACTIVE=docker
