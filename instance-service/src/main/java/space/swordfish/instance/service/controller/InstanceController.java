@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.instance.service.domain.Instance;
@@ -28,6 +29,7 @@ public class InstanceController {
     private String queue;
 
     @GetMapping()
+    @PreAuthorize("permitAll()")
     public String findAll() {
         Iterable<Instance> instances = instanceRepository.findAll();
 

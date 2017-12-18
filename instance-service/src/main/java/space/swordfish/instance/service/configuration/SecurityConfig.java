@@ -25,8 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.headers().disable();
-
         httpSecurity.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
