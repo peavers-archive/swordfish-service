@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
 # Set the IP of a server/cluster to joint here
-CONSUL_SERVER_IP_ADDRESS=${SERVER_IP}
+CONSUL_SERVER_IP_ADDRESS=""
 
 # Gets the private ip of the server automatically
 PRIVATE_IP_ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
+
+# Latest version doesn't work with Spring Consul yet
+CONSUL_VERSION=0.9.3
 
 # =======================
 # Install all the packages
 # =======================
 yum update -y && yum install -y \
-    docker \
     systemd-networkd.x86_64 \
     dnsmasq
 
@@ -25,17 +27,9 @@ chmod +x /usr/local/bin/docker-compose
 # =======================
 # Install Consul
 # =======================
-wget https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
-unzip consul_1.0.1_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+unzip consul_${CONSUL_VERSION}_linux_amd64.zip
 mv consul /usr/bin/
-consul --version
-
-
-# =======================
-# Configure docker
-# =======================
-usermod -a -G docker ec2-user
-service docker start
 
 
 # =======================
@@ -58,6 +52,27 @@ EOF
 
 systemctl daemon-reload
 systemctl restart systemd-networkd
+
+
+# =======================
+# Configure dnsmasq
+# =======================
+cat <<EOF > /etc/dnsmasq.d/consul.conf
+server=/consul/169.254.1.1#8600
+listen-address=127.0.0.1
+listen-address=169.254.1.1
+EOF
+
+systemctl restart dnsmasq
+
+
+# =======================
+# Configure system environment variables
+# =======================
+cat <<EOF > /etc/environment
+CONSUL_HTTP_ADDR=169.254.1.1:8500
+CONSUL_RPC_ADDR=169.254.1.1:8400
+EOF
 
 
 # =======================
@@ -100,28 +115,13 @@ systemctl start consul.service
 
 
 # =======================
-# Configure dnsmasq
+# Install docker last for DNS issues.
 # =======================
-cat <<EOF > /etc/dnsmasq.d/consul.conf
-server=/consul/169.254.1.1#8600
-listen-address=127.0.0.1
-listen-address=169.254.1.1
-EOF
+yum install -y \
+    docker
 
-
-# =======================
-# Configure system environment variables
-# =======================
-cat <<EOF > /etc/environment
-CONSUL_HTTP_ADDR=169.254.1.1:8500
-CONSUL_RPC_ADDR=169.254.1.1:8400
-EOF
-
-
-# =======================
-# Start the Registrator (docker image)
-# =======================
-docker run -d -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator consul://169.254.1.1:8500
+usermod -a -G docker ec2-user
+service docker start
 
 
 # =======================

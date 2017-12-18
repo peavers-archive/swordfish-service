@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
 # Remember to set where your configuration files are saved...
-GIT_CONFIG_REPOSITORY=${GIT_URL}
+GIT_CONFIG_REPOSITORY=""
 
 # Gets the private ip of the server automatically
 PRIVATE_IP_ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
+
+# Latest version doesn't work with Spring Consul yet
+CONSUL_VERSION=1.0.2
+
 
 # =======================
 # Install all the packages
@@ -19,10 +23,9 @@ yum update -y && yum install -y \
 # =======================
 # Install Consul
 # =======================
-wget https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
-unzip consul_1.0.1_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+unzip consul_${CONSUL_VERSION}_linux_amd64.zip
 mv consul /usr/bin/
-consul --version
 
 
 # =======================
@@ -111,6 +114,8 @@ listen-address=127.0.0.1
 listen-address=169.254.1.1
 EOF
 
+systemctl restart dnsmasq
+
 
 # =======================
 # Configure system environment variables
@@ -141,12 +146,6 @@ cat <<EOF > /tmp/git2consul.d/config.json
 EOF
 docker run -d --name git2consul -v /tmp/git2consul.d:/etc/git2consul.d cimpress/git2consul --endpoint 169.254.1.1 --port 8500 --config-file /etc/git2consul.d/config.json
 docker logs git2consul
-
-
-# =======================
-# Start the Registrator (docker image)
-# =======================
-docker run -d -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator consul://169.254.1.1:8500
 
 
 # =======================
