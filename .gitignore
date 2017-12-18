@@ -117,7 +117,6 @@ local.properties
 .scala_dependencies
 .worksheet
 
-docker-compose.yml
 /**/deploy.sh
 /**/build
 /**/out

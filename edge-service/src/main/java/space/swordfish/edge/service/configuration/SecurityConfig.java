@@ -23,33 +23,32 @@ import lombok.extern.slf4j.Slf4j;
 @Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Value(value = "${auth0.audience}")
-	private String audience;
+    @Value(value = "${auth0.audience}")
+    private String audience;
 
-	@Value(value = "${auth0.issuer}")
-	private String issuer;
+    @Value(value = "${auth0.issuer}")
+    private String issuer;
 
-	@Override
-	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.NEVER);
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
-		JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity).csrf()
-				.disable().authorizeRequests().antMatchers("/health").permitAll();
+        JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity).csrf().disable()
+                .authorizeRequests().antMatchers("/health").permitAll();
+    }
 
-	}
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(ImmutableList.of("*"));
+        configuration.setAllowedMethods(ImmutableList.of("*"));
+        configuration.setAllowCredentials(true);
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(ImmutableList.of("*"));
-		configuration.setAllowedMethods(ImmutableList.of("*"));
-		configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(ImmutableList.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
 
-		configuration.setAllowedHeaders(ImmutableList.of("*"));
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-
-		return source;
-	}
+        return source;
+    }
 }

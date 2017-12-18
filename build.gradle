@@ -25,7 +25,8 @@ allprojects {
 subprojects {
     buildscript {
         ext { springBootVersion = '1.5.9.RELEASE' }
-        ext { swordfishCommonVersion = 'e3917387df' }
+        ext { swordfishCommonVersion = '-SNAPSHOT' }
+        ext { springCloudDependanceVersion = '1.2.1.RELEASE' }
     }
 
     apply plugin: 'java'
@@ -45,10 +46,7 @@ subprojects {
     }
 
     dependencies {
-        compile('org.springframework.boot:spring-boot-starter-actuator') {
-            exclude group: 'org.springframework.security', module: '*'
-        }
-
+        compile('org.springframework.boot:spring-boot-starter-actuator')
         compile('org.springframework.cloud:spring-cloud-starter-consul-config')
         compile('org.springframework.cloud:spring-cloud-starter-consul-discovery')
 
@@ -59,8 +57,8 @@ subprojects {
     dependencyManagement {
         imports {
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-            mavenBom 'org.springframework.cloud:spring-cloud-aws:1.2.1.RELEASE'
-            mavenBom "org.springframework.cloud:spring-cloud-consul-dependencies:1.2.1.RELEASE"
+            mavenBom "org.springframework.cloud:spring-cloud-aws:${springCloudDependanceVersion}"
+            mavenBom "org.springframework.cloud:spring-cloud-consul-dependencies:${springCloudDependanceVersion}"
         }
     }
 

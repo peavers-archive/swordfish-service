@@ -3,18 +3,17 @@ package space.swordfish.instance.service.configuration;
 import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@Order(ManagementServerProperties.ACCESS_OVERRIDE_ORDER)
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value(value = "${auth0.audience}")
@@ -25,11 +24,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
+
+        log.info("Audience {} and Issuer {}", audience, issuer);
 
         JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity)
-                .csrf().disable()
-                .authorizeRequests().anyRequest().authenticated();
+                .authorizeRequests().antMatchers("/health").permitAll();
+
     }
 }
