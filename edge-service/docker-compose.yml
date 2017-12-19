@@ -1,6 +1,9 @@
 version: '3.4'
 
 services:
+
+
+
   edge-service:
     container_name: edge-service
     image: peavers/edge-service
@@ -9,7 +12,19 @@ services:
       - /home/ec2-user/letsencrypt/keys/letsencrypt:/etc/letsencrypt/live/
     ports:
       - 443:8443
-      - 8443:8443
+    environment:
+    - TZ=Pacific/Auckland
+    - SPRING_PROFILES_ACTIVE=docker
+    - SPRING_CLOUD_CONSUL_HOST=$CONSUL_HTTP_ADDR
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  instance-service:
+    container_name: instance-service
+    image: peavers/instance-service
+    restart: always
     environment:
     - TZ=Pacific/Auckland
     - SPRING_PROFILES_ACTIVE=docker
