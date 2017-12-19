@@ -11,7 +11,6 @@ spring:
       discovery:
         instance-id: ${spring.application.name}
         prefer-ip-address: true
-        scheme: https
 
 # Docker configuration
 ---
