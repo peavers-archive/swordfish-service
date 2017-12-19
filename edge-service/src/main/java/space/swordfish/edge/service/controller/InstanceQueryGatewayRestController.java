@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,7 @@ public class InstanceQueryGatewayRestController {
 
     private final static String SERVICE = "http://instance-service/instances";
 
+    @LoadBalanced
     @Autowired
     RestTemplate restTemplate;
 
