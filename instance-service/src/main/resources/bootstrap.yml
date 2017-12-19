@@ -9,4 +9,4 @@ spring:
 # Docker configuration
 ---
 spring:
-  profiles: production
+  profiles: docker
