@@ -11,6 +11,7 @@ spring:
       discovery:
         instance-id: ${spring.application.name}
         prefer-ip-address: true
+        scheme: https
 
 # Docker configuration
 ---
@@ -20,3 +21,5 @@ spring:
     consul:
       config:
         prefix: swordfish/master/production
+      discovery:
+        scheme: https
