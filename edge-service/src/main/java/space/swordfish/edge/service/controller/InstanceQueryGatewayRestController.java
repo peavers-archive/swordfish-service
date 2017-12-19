@@ -24,10 +24,10 @@ public class InstanceQueryGatewayRestController {
 
     @LoadBalanced
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
-    AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     @ApiOperation(value = "List all instances and their properties.")
     @GetMapping("/instances")
@@ -37,8 +37,7 @@ public class InstanceQueryGatewayRestController {
 
         HttpEntity<String> entity = authenticationService.addAuthenticationHeader();
 
-        return restTemplate.exchange(SERVICE, HttpMethod.GET,
-                entity, reference);
+        return restTemplate.exchange(SERVICE, HttpMethod.GET, entity, reference);
     }
 
     @ApiOperation(value = "List a single instance and it's properties by it's MongoDb ID")
