@@ -20,5 +20,3 @@ spring:
     consul:
       config:
         prefix: swordfish/master/production
-      discovery:
-        scheme: https
