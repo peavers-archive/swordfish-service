@@ -1,26 +1,24 @@
 package space.swordfish.edge.service.configuration;
 
+import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
+import com.google.common.collect.ImmutableList;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
-import com.google.common.collect.ImmutableList;
-
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@Order(1)
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value(value = "${auth0.audience}")
@@ -31,10 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
-
-        JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity).csrf().disable()
+        JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity)
                 .authorizeRequests().antMatchers("/health").permitAll();
     }
 

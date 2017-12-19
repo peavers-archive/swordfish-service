@@ -24,9 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-
-        log.info("Audience {} and Issuer {}", audience, issuer);
-
         JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity)
                 .authorizeRequests().antMatchers("/health").permitAll();
 
