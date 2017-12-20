@@ -1,6 +1,7 @@
 version: '2'
 services:
 
+
   config-service:
     container_name: config-service
     image: peavers/config-service
@@ -19,6 +20,23 @@ services:
       - 8761:8761
     environment:
     - TZ=Pacific/Auckland
+
+  edge-service:
+    container_name: edge-service
+    image: peavers/edge-service
+    restart: always
+    external_links:
+      - config-service:config-service
+      - eureka-service:eureka-service
+    ports:
+      - 80:8080
+    environment:
+    - TZ=Pacific/Auckland
+    - SPRING_PROFILES_ACTIVE=docker
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
 
   instance-service:
     container_name: instance-service
