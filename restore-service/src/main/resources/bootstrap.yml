@@ -2,21 +2,14 @@ spring:
   application:
     name: restore-service
   cloud:
-    consul:
-      config:
-        enabled: true
-        prefix: swordfish/master/development
-        defaultContext: application
-        format: FILES
-      discovery:
-        instance-id: ${spring.application.name}
-        prefer-ip-address: true
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
 
 # Docker configuration
 ---
 spring:
   profiles: docker
   cloud:
-    consul:
-      config:
-        prefix: swordfish/master/production
+    config:
+      uri: http://config-service:8888
