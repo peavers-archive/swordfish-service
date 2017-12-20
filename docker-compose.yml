@@ -12,7 +12,7 @@ services:
       - config-service:config-service
       - eureka-service:eureka-service
     ports:
-      - 8080:8080
+      - 443:8443
     environment:
     - TZ=Pacific/Auckland
     - SPRING_PROFILES_ACTIVE=docker
