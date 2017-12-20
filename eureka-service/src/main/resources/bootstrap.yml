@@ -1,0 +1,16 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: eureka-service
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+# Docker configuration
+---
+spring:
+  profiles: docker

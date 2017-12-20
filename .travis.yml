@@ -24,6 +24,18 @@ after_success:
   # TAG
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
 
+  # CONFIG SERVICE
+  - export CONFIG=$PROJECT/config-service
+  - docker build -t $CONFIG ./config-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
+
+  # EUREKA SERVICE
+  - export CONFIG=$PROJECT/eureka-service
+  - docker build -t $CONFIG ./eureka-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
+
   # EDGE SERVICE
   - export CONFIG=$PROJECT/edge-service
   - docker build -t $CONFIG ./edge-service

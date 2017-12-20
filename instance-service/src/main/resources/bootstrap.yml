@@ -10,3 +10,4 @@ spring:
 ---
 spring:
   profiles: docker
+

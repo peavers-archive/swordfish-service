@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: config-service
+
+server:
+  port: 8888
+
+# Docker configuration
+---
+spring:
+  profiles: docker

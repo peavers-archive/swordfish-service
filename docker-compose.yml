@@ -1,0 +1,37 @@
+version: '2'
+services:
+
+  config-service:
+    container_name: config-service
+    image: peavers/config-service
+    ports:
+      - 8888:8888
+    environment:
+    - TZ=Pacific/Auckland
+    - SPRING_CLOUD_CONFIG_SERVER_GIT_URI
+    - SPRING_CLOUD_CONFIG_SERVER_GIT_USERNAME
+    - SPRING_CLOUD_CONFIG_SERVER_GIT_PASSWORD
+
+  eureka-service:
+    container_name: eureka-service
+    image: peavers/eureka-service
+    ports:
+      - 8761:8761
+    environment:
+    - TZ=Pacific/Auckland
+
+  instance-service:
+    container_name: instance-service
+    image: peavers/instance-service
+    restart: always
+    external_links:
+      - config-service:config-service
+      - eureka-service:eureka-service
+    environment:
+    - TZ=Pacific/Auckland
+    - SPRING_PROFILES_ACTIVE=docker
+    - SPRING_CLOUD_CONFIG_URI=http://config-service:8888/
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
