@@ -30,7 +30,6 @@ services:
     environment:
     - TZ=Pacific/Auckland
     - SPRING_PROFILES_ACTIVE=docker
-    - SPRING_CLOUD_CONFIG_URI=http://config-service:8888/
     logging:
       options:
         max-size: "10m"
