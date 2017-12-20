@@ -12,10 +12,13 @@ services:
       - config-service:config-service
       - eureka-service:eureka-service
     ports:
-      - 443:8080
+      - 8080:8080
     environment:
     - TZ=Pacific/Auckland
     - SPRING_PROFILES_ACTIVE=docker
+    - CERT_LOCATION
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_ACCESS_KEY_ID
     logging:
       options:
         max-size: "10m"
@@ -65,8 +68,6 @@ services:
       options:
         max-size: "10m"
         max-file: "10"
-
-
 
   #############################
   # Boring management services
