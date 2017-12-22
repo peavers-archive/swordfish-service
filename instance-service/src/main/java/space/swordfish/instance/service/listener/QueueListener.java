@@ -1,58 +1,42 @@
 package space.swordfish.instance.service.listener;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.instance.service.domain.Instance;
-import space.swordfish.instance.service.service.InstanceEC2Service;
+import space.swordfish.instance.service.service.*;
 
 @Slf4j
 @Service
 @EnableSqs
 public class QueueListener {
 
-	/**
-	 * Start a instance
-	 */
 	private static final String START = "start";
-
-	/**
-	 * Stop a instance
-	 */
 	private static final String STOP = "stop";
-
-	/**
-	 * Reboot a instance
-	 */
 	private static final String REBOOT = "reboot";
-
-	/**
-	 * Create a new instance
-	 */
 	private static final String CREATE = "create";
-
-	/**
-	 * Terminate a instance
-	 */
 	private static final String TERMINATE = "terminate";
 
-	/**
-	 * Handles actions on preformed on instances
-	 */
-	private final InstanceEC2Service instanceEC2Service;
-
+	private final EC2Create ec2Create;
+	private final EC2Stop ec2Stop;
+	private final EC2Start ec2Start;
+	private final EC2Terminate ec2Terminate;
+	private final EC2Reboot ec2Reboot;
 	private final JsonTransformService jsonTransformService;
 
-	/**
-	 * @param instanceEC2Service InstanceEC2Service for preforming actions on instances
-	 */
 	@Autowired
-	public QueueListener(InstanceEC2Service instanceEC2Service,
+	public QueueListener(EC2Create ec2Create, EC2Stop ec2Stop, EC2Start ec2Start,
+			EC2Terminate ec2Terminate, EC2Reboot ec2Reboot,
 			JsonTransformService jsonTransformService) {
-		this.instanceEC2Service = instanceEC2Service;
+		this.ec2Create = ec2Create;
+		this.ec2Stop = ec2Stop;
+		this.ec2Start = ec2Start;
+		this.ec2Terminate = ec2Terminate;
+		this.ec2Reboot = ec2Reboot;
 		this.jsonTransformService = jsonTransformService;
 	}
 
@@ -75,23 +59,23 @@ public class QueueListener {
 
 		switch (instance.getSwordfishCommand()) {
 		case START: {
-			instanceEC2Service.start(instance.getInstanceId());
+			ec2Start.start(instance.getInstanceId());
 			break;
 		}
 		case STOP: {
-			instanceEC2Service.stop(instance.getInstanceId());
+			ec2Stop.stop(instance.getInstanceId());
 			break;
 		}
 		case CREATE: {
-			instanceEC2Service.create(instance);
+			ec2Create.create(instance);
 			break;
 		}
 		case REBOOT: {
-			instanceEC2Service.reboot(instance.getInstanceId());
+			ec2Reboot.reboot(instance.getInstanceId());
 			break;
 		}
 		case TERMINATE: {
-			instanceEC2Service.terminate(instance.getInstanceId());
+			ec2Terminate.terminate(instance.getInstanceId());
 			break;
 		}
 		default: {

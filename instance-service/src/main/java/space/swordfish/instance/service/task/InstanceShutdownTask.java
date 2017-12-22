@@ -1,38 +1,36 @@
 package space.swordfish.instance.service.task;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
-import space.swordfish.instance.service.service.InstanceEC2Service;
-
-import javax.annotation.PostConstruct;
+import space.swordfish.instance.service.service.EC2Stop;
 
 @Slf4j
 @Component
 public class InstanceShutdownTask {
 
-	private ThreadPoolTaskScheduler taskScheduler;
-
-	private CronTrigger cronTrigger;
-
-	private InstanceRepository instanceRepository;
-
-	private InstanceEC2Service instanceEC2Service;
+	private final EC2Stop ec2Stop;
+	private final CronTrigger cronTrigger;
+	private final InstanceRepository instanceRepository;
+	private final ThreadPoolTaskScheduler taskScheduler;
 
 	@Autowired
 	public InstanceShutdownTask(
 			@Qualifier("threadPoolTaskScheduler") ThreadPoolTaskScheduler taskScheduler,
 			CronTrigger cronTrigger, InstanceRepository instanceRepository,
-			InstanceEC2Service instanceEC2Service) {
+			EC2Stop ec2Stop) {
 		this.taskScheduler = taskScheduler;
 		this.cronTrigger = cronTrigger;
 		this.instanceRepository = instanceRepository;
-		this.instanceEC2Service = instanceEC2Service;
+		this.ec2Stop = ec2Stop;
 	}
 
 	@PostConstruct
@@ -53,7 +51,7 @@ public class InstanceShutdownTask {
 			for (Instance instance : instances) {
 				log.info("automatically shutting down {}", instance.getTags());
 
-				instanceEC2Service.stop(instance.getInstanceId());
+				ec2Stop.stop(instance.getInstanceId());
 			}
 		}
 	}

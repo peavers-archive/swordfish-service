@@ -1,29 +1,28 @@
 package space.swordfish.instance.service.task;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
-import space.swordfish.instance.service.service.InstanceEC2Service;
 
-import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import space.swordfish.instance.service.service.EC2Sync;
 
 @Slf4j
 @Component
 public class InstanceFetchTask {
 
-	private ThreadPoolTaskScheduler taskScheduler;
-
-	private InstanceEC2Service instanceEC2Service;
+	private final EC2Sync ec2Sync;
+	private final ThreadPoolTaskScheduler taskScheduler;
 
 	@Autowired
-	public InstanceFetchTask(
-			@Qualifier("threadPoolTaskScheduler") ThreadPoolTaskScheduler taskScheduler,
-			InstanceEC2Service instanceEC2Service) {
+	public InstanceFetchTask(EC2Sync ec2Sync,
+			@Qualifier("threadPoolTaskScheduler") ThreadPoolTaskScheduler taskScheduler) {
+		this.ec2Sync = ec2Sync;
 		this.taskScheduler = taskScheduler;
-		this.instanceEC2Service = instanceEC2Service;
 	}
 
 	@PostConstruct
@@ -40,7 +39,7 @@ public class InstanceFetchTask {
 
 		@Override
 		public void run() {
-			instanceEC2Service.syncAll();
+			ec2Sync.syncAll();
 		}
 	}
 }
