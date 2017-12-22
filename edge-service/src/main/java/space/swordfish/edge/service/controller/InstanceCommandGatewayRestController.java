@@ -1,9 +1,7 @@
 package space.swordfish.edge.service.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
@@ -11,12 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import space.swordfish.common.auth.services.AuthenticationService;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.edge.service.domain.Instance;
-import space.swordfish.edge.service.service.AuthenticationService;
-
-import java.io.IOException;
-
 
 @Api(tags = "Instances Command")
 @Slf4j

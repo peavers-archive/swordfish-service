@@ -4,9 +4,6 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-aws-messaging')
 
     compile('org.springframework.boot:spring-boot-starter-security')
-    compile('com.auth0:auth0-spring-security-api:1.0.0-rc.3')
-    compile('com.auth0:auth0:1.1.0')
-
     compile('io.springfox:springfox-swagger2:2.7.0')
 }
 

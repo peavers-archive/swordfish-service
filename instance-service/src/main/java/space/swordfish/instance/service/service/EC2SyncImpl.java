@@ -15,6 +15,7 @@ import com.amazonaws.waiters.WaiterHandler;
 import com.amazonaws.waiters.WaiterParameters;
 
 import lombok.extern.slf4j.Slf4j;
+import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.services.NotificationService;
 import space.swordfish.instance.service.domain.Instance;

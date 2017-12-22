@@ -12,6 +12,7 @@ import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.*;
 
 import lombok.extern.slf4j.Slf4j;
+import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.instance.service.domain.Instance;
 
 @Slf4j

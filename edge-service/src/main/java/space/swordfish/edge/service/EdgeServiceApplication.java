@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-import org.springframework.context.annotation.Bean;
-import space.swordfish.edge.service.filter.AuthorizationFilter;
+import org.springframework.context.annotation.ComponentScan;
 
+@ComponentScan({ "space.swordfish.*" })
 @SpringBootApplication
 @EnableZuulProxy
 @EnableHystrix
@@ -18,8 +18,4 @@ public class EdgeServiceApplication {
 		SpringApplication.run(EdgeServiceApplication.class, args);
 	}
 
-	@Bean
-	public AuthorizationFilter authorizationFilter() {
-		return new AuthorizationFilter();
-	}
 }

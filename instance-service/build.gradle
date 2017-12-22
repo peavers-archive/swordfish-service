@@ -6,9 +6,4 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-aws-messaging')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
     compile('org.springframework.boot:spring-boot-starter-data-mongodb')
-
-    compile('com.auth0:auth0-spring-security-api:1.0.0-rc.3')
-    compile('com.auth0:auth0:1.1.0')
-
-    compile('com.mashape.unirest:unirest-java:1.4.9')
 }
