@@ -34,6 +34,7 @@ public class Instance {
 
 	boolean production;
 	boolean staticIp;
+	boolean swordfish;
 
 	String name;
 	String description;

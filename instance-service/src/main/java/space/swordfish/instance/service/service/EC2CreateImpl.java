@@ -45,6 +45,9 @@ public class EC2CreateImpl implements EC2Create {
 		tags.add(new Tag("Static", String.valueOf(instance.isStaticIp())));
 		tags.add(new Tag("UserId", userId));
 
+		// All servers created with Swordfish are tagged as such
+		tags.add(new Tag("Swordfish", "true"));
+
 		TagSpecification tagSpecification = new TagSpecification();
 		tagSpecification.setTags(tags);
 		tagSpecification.setResourceType(ResourceType.Instance);

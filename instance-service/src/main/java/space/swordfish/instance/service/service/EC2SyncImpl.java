@@ -96,7 +96,11 @@ public class EC2SyncImpl implements EC2Sync {
 							com.amazonaws.services.ec2.model.Instance awsInstance) {
 						Instance instance = instanceBuilder(awsInstance);
 
-						if (!instance.getState().equals("terminated")) {
+						boolean swordfish = instance.getTags().stream()
+								.filter(key -> key.equals("swordfish")).findFirst()
+								.equals(true);
+
+						if (!instance.getState().equals("terminated") && swordfish) {
 							instanceRepository.save(instance);
 
 							notificationService.send("server_refresh", "server_refresh",
