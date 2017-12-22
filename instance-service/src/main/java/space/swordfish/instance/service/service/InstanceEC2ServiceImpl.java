@@ -1,26 +1,32 @@
 package space.swordfish.instance.service.service;
 
-import com.amazonaws.handlers.AsyncHandler;
-import com.amazonaws.services.ec2.AmazonEC2Async;
-import com.amazonaws.services.ec2.model.*;
-import com.amazonaws.waiters.WaiterHandler;
-import com.amazonaws.waiters.WaiterParameters;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import space.swordfish.common.json.services.JsonTransformService;
-import space.swordfish.common.notification.services.NotificationService;
-import space.swordfish.instance.service.domain.Instance;
-import space.swordfish.instance.service.repository.InstanceRepository;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.amazonaws.handlers.AsyncHandler;
+import com.amazonaws.services.ec2.AmazonEC2Async;
+import com.amazonaws.services.ec2.model.*;
+import com.amazonaws.waiters.WaiterHandler;
+import com.amazonaws.waiters.WaiterParameters;
+
+import lombok.extern.slf4j.Slf4j;
+import space.swordfish.common.json.services.JsonTransformService;
+import space.swordfish.common.notification.services.NotificationService;
+import space.swordfish.instance.service.domain.Instance;
+import space.swordfish.instance.service.repository.InstanceRepository;
+
 @Slf4j
 @Service
 public class InstanceEC2ServiceImpl implements InstanceEC2Service {
+
+	@Value("{aws.defaults.securityGroup}")
+	private String defaultSecurityGroupIds;
 
 	private final InstanceRepository instanceRepository;
 	private final AmazonEC2Async amazonEC2Async;
@@ -179,7 +185,7 @@ public class InstanceEC2ServiceImpl implements InstanceEC2Service {
 		RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
 				.withInstanceType(instance.getInstanceType())
 				.withImageId(instance.getImageId()).withMinCount(1).withMaxCount(1)
-				.withSecurityGroupIds(instance.getDefaultSecurityGroupIds())
+				.withSecurityGroupIds(defaultSecurityGroupIds)
 				.withKeyName(instance.getKeyName()).withSubnetId(instance.getSubnetId())
 				.withTagSpecifications(tagSpecification);
 

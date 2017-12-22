@@ -1,16 +1,18 @@
 package space.swordfish.instance.service.domain;
 
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.amazonaws.services.ec2.model.GroupIdentifier;
 import com.amazonaws.services.ec2.model.Tag;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.jasminb.jsonapi.annotations.Type;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Represents one instance with data both from AWS and Swordfish users.
@@ -43,7 +45,6 @@ public class Instance {
 	String state;
 	String publicIp;
 	String privateIp;
-	String defaultSecurityGroupIds = "sg-47284c22";
 
 	String swordfishCommand;
 
