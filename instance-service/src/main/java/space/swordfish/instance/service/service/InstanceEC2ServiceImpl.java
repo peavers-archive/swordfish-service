@@ -25,7 +25,7 @@ import space.swordfish.instance.service.repository.InstanceRepository;
 @Service
 public class InstanceEC2ServiceImpl implements InstanceEC2Service {
 
-	@Value("{aws.defaults.securityGroup}")
+	@Value("${aws.defaults.securityGroup}")
 	private String defaultSecurityGroupIds;
 
 	private final InstanceRepository instanceRepository;
