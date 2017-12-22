@@ -1,7 +1,8 @@
 package space.swordfish.restore.service.api.lock;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.ResponseEntity;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public interface SilverstripeLock {
 

@@ -2,6 +2,7 @@ package space.swordfish.restore.service.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import space.swordfish.common.queue.services.QueueMessageService;
 import space.swordfish.common.queue.services.QueueMessageServiceImpl;
 
@@ -9,8 +10,8 @@ import space.swordfish.common.queue.services.QueueMessageServiceImpl;
 public class QueueConfig {
 
 	@Bean
-    public QueueMessageService queueMessageService() {
-        return new QueueMessageServiceImpl();
-    }
+	public QueueMessageService queueMessageService() {
+		return new QueueMessageServiceImpl();
+	}
 
 }

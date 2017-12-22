@@ -1,7 +1,5 @@
 package space.swordfish.restore.service.api.stack;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -9,14 +7,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Service
 public class SilverstripeStackImpl implements SilverstripeStack {
 
+	private final RestTemplate restTemplate;
 	@Value("${silverstripe.dashHost}")
 	private String HOST;
-
-	private final RestTemplate restTemplate;
 
 	@Autowired
 	public SilverstripeStackImpl(RestTemplate restTemplate) {

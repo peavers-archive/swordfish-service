@@ -1,7 +1,9 @@
 package space.swordfish.restore.service.api.deployment;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.ResponseEntity;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import space.swordfish.restore.service.domain.DeploymentEvent;
 
 public interface SilverstripeDeployment {

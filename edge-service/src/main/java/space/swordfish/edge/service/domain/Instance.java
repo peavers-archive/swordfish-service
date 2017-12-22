@@ -1,13 +1,14 @@
 package space.swordfish.edge.service.domain;
 
+import java.util.Date;
+import java.util.List;
+
 import com.amazonaws.services.ec2.model.GroupIdentifier;
 import com.amazonaws.services.ec2.model.Tag;
 import com.github.jasminb.jsonapi.annotations.Id;
 import com.github.jasminb.jsonapi.annotations.Type;
-import lombok.Data;
 
-import java.util.Date;
-import java.util.List;
+import lombok.Data;
 
 @Type("instances")
 @Data

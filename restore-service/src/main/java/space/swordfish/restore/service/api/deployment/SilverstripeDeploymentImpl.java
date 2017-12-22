@@ -1,6 +1,5 @@
 package space.swordfish.restore.service.api.deployment;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -8,15 +7,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import space.swordfish.restore.service.domain.DeploymentEvent;
 
 @Service
 public class SilverstripeDeploymentImpl implements SilverstripeDeployment {
 
+	private final RestTemplate restTemplate;
 	@Value("${silverstripe.dashHost}")
 	private String HOST;
-
-	private final RestTemplate restTemplate;
 
 	@Autowired
 	public SilverstripeDeploymentImpl(RestTemplate restTemplate) {

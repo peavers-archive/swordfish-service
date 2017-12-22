@@ -1,7 +1,9 @@
 package space.swordfish.restore.service.api.snapshot;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.ResponseEntity;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import space.swordfish.restore.service.domain.StackEvent;
 
 public interface SilverstripeSnapshot {
