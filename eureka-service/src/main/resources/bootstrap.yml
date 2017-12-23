@@ -10,6 +10,14 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
 
+# Since swordfish-commons brings in security, disable it here for the moment...
+security:
+  basic:
+    enabled: false
+management:
+  security:
+    enabled: false
+
 # Docker configuration
 ---
 spring:

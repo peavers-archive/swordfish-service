@@ -5,6 +5,14 @@ spring:
 server:
   port: 8888
 
+# Since swordfish-commons brings in security, disable it here for the moment...
+security:
+  basic:
+    enabled: false
+management:
+  security:
+    enabled: false
+
 # Docker configuration
 ---
 spring:
