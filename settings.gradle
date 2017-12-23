@@ -1,4 +1,4 @@
-rootProject.name = 'swordfish-root'
+rootProject.name = 'swordfish-service'
 
 include 'edge-service'
 include 'instance-service'
