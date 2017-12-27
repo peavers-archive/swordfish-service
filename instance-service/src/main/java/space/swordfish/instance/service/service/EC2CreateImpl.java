@@ -1,19 +1,17 @@
 package space.swordfish.instance.service.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.*;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.instance.service.domain.Instance;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -41,12 +39,8 @@ public class EC2CreateImpl implements EC2Create {
 
 		List<Tag> tags = new ArrayList<>();
 		tags.add(new Tag("Name", instance.getName()));
-		tags.add(new Tag("Description", instance.getDescription()));
 		tags.add(new Tag("Production", String.valueOf(instance.isProduction())));
-		tags.add(new Tag("Static", String.valueOf(instance.isStaticIp())));
 		tags.add(new Tag("UserId", userId));
-
-		// All servers created with Swordfish are tagged as such
 		tags.add(new Tag("Swordfish", "true"));
 
 		TagSpecification tagSpecification = new TagSpecification();

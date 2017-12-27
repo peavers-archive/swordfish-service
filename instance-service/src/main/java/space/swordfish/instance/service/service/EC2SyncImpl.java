@@ -1,25 +1,23 @@
 package space.swordfish.instance.service.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.*;
 import com.amazonaws.waiters.WaiterHandler;
 import com.amazonaws.waiters.WaiterParameters;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.services.NotificationService;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -156,10 +154,8 @@ public class EC2SyncImpl implements EC2Sync {
 		List<Tag> tags = awsInstance.getTags();
 
 		String name = "unknown";
-		String description = "unknown";
 		String userId = "unknown";
 		boolean production = false;
-		boolean staticIp = false;
 
 		if (!tags.isEmpty()) {
 			for (Tag tag : tags) {
@@ -167,16 +163,8 @@ public class EC2SyncImpl implements EC2Sync {
 					name = tag.getValue();
 				}
 
-				if (tag.getKey().equals("Description")) {
-					description = tag.getValue();
-				}
-
 				if (tag.getKey().equals("Production")) {
 					production = Boolean.valueOf(tag.getValue());
-				}
-
-				if (tag.getKey().equals("Static")) {
-					staticIp = Boolean.valueOf(tag.getValue());
 				}
 
 				if (tag.getKey().equals("UserId")) {
@@ -201,9 +189,7 @@ public class EC2SyncImpl implements EC2Sync {
 		instance.setPrivateIp(awsInstance.getPrivateIpAddress());
 		instance.setCreated(awsInstance.getLaunchTime());
 		instance.setName(name);
-		instance.setDescription(description);
 		instance.setProduction(production);
-		instance.setStaticIp(staticIp);
 		instance.setUserId(userId);
 		instance.setUserName(auth0Service.getUserName(userId));
 		instance.setUserPicture(auth0Service.getUserProfilePicture(userId));
