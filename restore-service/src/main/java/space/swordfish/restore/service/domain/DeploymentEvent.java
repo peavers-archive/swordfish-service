@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class DeploymentEvent {
-	String ref;
-	String ref_type;
-	String title;
-	String summary;
-	String bypass_and_start;
+    String ref;
+    String ref_type;
+    String title;
+    String summary;
+    String bypass_and_start;
 }

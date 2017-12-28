@@ -8,7 +8,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @SpringBootApplication
 public class NodeServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(NodeServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(NodeServiceApplication.class, args);
+    }
 }

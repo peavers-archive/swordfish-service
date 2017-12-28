@@ -1,7 +1,10 @@
 package space.swordfish.edge.service.controller;
 
-import java.io.IOException;
-
+import com.amazonaws.services.sqs.AmazonSQSAsync;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
@@ -11,54 +14,51 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.amazonaws.services.sqs.AmazonSQSAsync;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.edge.service.domain.StackEvent;
+
+import java.io.IOException;
 
 @Api(tags = "Restore Command")
 @Slf4j
 @RestController
 public class RestoreCommandGatewayRestController {
 
-	private final QueueMessagingTemplate queueMessagingTemplate;
-	private final JsonTransformService jsonTransformService;
+    private final QueueMessagingTemplate queueMessagingTemplate;
+    private final JsonTransformService jsonTransformService;
 
-	@Value("${queues.restoreEvents}")
-	private String queue;
+    @Value("${queues.restoreEvents}")
+    private String queue;
 
-	@Autowired
-	public RestoreCommandGatewayRestController(AmazonSQSAsync amazonSqs,
-			QueueMessagingTemplate queueMessagingTemplate,
-			JsonTransformService jsonTransformService) {
-		this.queueMessagingTemplate = queueMessagingTemplate;
-		this.jsonTransformService = jsonTransformService;
+    @Autowired
+    public RestoreCommandGatewayRestController(AmazonSQSAsync amazonSqs,
+                                               QueueMessagingTemplate queueMessagingTemplate,
+                                               JsonTransformService jsonTransformService) {
+        this.queueMessagingTemplate = queueMessagingTemplate;
+        this.jsonTransformService = jsonTransformService;
 
-		amazonSqs.createQueueAsync(queue);
-	}
+        amazonSqs.createQueueAsync(queue);
+    }
 
-	@ApiOperation(value = "Issue a command against a restore point.")
-	@PostMapping("/stack-events")
-	public ResponseEntity<String> event(@RequestBody String payload) {
-		try {
-			String result = java.net.URLDecoder.decode(payload, "UTF-8");
-			ObjectMapper objectMapper = new ObjectMapper();
-			StackEvent stackEvent = objectMapper.readValue(result, StackEvent.class);
+    @ApiOperation(value = "Issue a command against a restore point.")
+    @PostMapping("/stack-events")
+    public ResponseEntity<String> event(@RequestBody String payload) {
+        try {
+            log.info("Stack event payload {}", payload);
 
-			payload = jsonTransformService.write(stackEvent);
+            String result = java.net.URLDecoder.decode(payload, "UTF-8");
+            ObjectMapper objectMapper = new ObjectMapper();
 
-			this.queueMessagingTemplate.send(queue,
-					MessageBuilder.withPayload(payload).build());
-		}
-		catch (IOException e) {
-			log.error(e.getLocalizedMessage());
-		}
+            StackEvent stackEvent = objectMapper.readValue(result, StackEvent.class);
 
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+            payload = jsonTransformService.write(stackEvent);
+
+            this.queueMessagingTemplate.send(queue,
+                    MessageBuilder.withPayload(payload).build());
+        } catch (IOException e) {
+            log.error(e.getLocalizedMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

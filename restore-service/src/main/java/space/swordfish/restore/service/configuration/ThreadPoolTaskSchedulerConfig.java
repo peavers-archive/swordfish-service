@@ -8,18 +8,18 @@ import org.springframework.scheduling.support.CronTrigger;
 @Configuration
 public class ThreadPoolTaskSchedulerConfig {
 
-	@Bean
-	public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-		ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-		threadPoolTaskScheduler.setPoolSize(5);
-		threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setPoolSize(5);
+        threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
 
-		return threadPoolTaskScheduler;
-	}
+        return threadPoolTaskScheduler;
+    }
 
-	@Bean
-	public CronTrigger cronTrigger() {
-		return new CronTrigger("0 * * * * ?");
-	}
+    @Bean
+    public CronTrigger cronTrigger() {
+        return new CronTrigger("0 * * * * ?");
+    }
 
 }

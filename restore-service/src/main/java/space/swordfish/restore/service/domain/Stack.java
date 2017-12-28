@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Stack {
 
-	@Id
-	String id;
-	String name;
-	String title;
-	String created;
+    @Id
+    String id;
+    String name;
+    String title;
+    String created;
 
     @JsonProperty("created_unix")
     String createdUnix;

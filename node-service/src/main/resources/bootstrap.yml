@@ -2,11 +2,17 @@ spring:
   application:
     name: node-service
   cloud:
-    consul:
-      config:
-        enabled: true
-        prefix: swordfish/master/
-        format: FILES
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
+
+# Since swordfish-commons brings in security, disable it here for the moment...
+security:
+  basic:
+    enabled: false
+management:
+  security:
+    enabled: false
 
 # Docker configuration
 ---
