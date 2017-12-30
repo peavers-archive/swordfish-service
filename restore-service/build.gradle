@@ -3,6 +3,8 @@ jar {
 }
 
 dependencies {
+    compile('org.springframework.cloud:spring-cloud-starter-eureka')
+    compile('org.springframework.cloud:spring-cloud-starter-config')
     compile('org.springframework.cloud:spring-cloud-aws-messaging')
 
     compile('org.springframework.boot:spring-boot-starter-web')
