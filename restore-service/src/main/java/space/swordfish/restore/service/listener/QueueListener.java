@@ -33,7 +33,6 @@ public class QueueListener {
         this.silverstripeService = silverstripeService;
         this.jsonTransformService = jsonTransformService;
         this.queueMessageService = queueMessageService;
-
     }
 
     /**
@@ -47,9 +46,13 @@ public class QueueListener {
         Future<String> snapshot = silverstripeService
                 .createSnapshot(stackEvent.getProjectId(), stackEvent);
 
+        log.info("StackEvent {}", stackEvent);
+
         while (!snapshot.isDone()) {
             try {
                 String message = snapshot.get(3000, TimeUnit.SECONDS);
+
+                log.info("Message {}", message);
 
                 queueMessageService.send(stackEvent.getInstanceId(), message);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {

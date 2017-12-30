@@ -39,7 +39,7 @@ public class DownloadServiceImpl implements DownloadService {
     @Override
     public String writeSnapshot(ResponseEntity<byte[]> response, Snapshot snapshot) {
         try {
-            String filename = snapshot.getStackId() + "-" + Instant.now().getEpochSecond() + ".sspak";
+            String filename = snapshot.getStackId() + "-" + snapshot.getMode() + "-" + Instant.now().getEpochSecond() + ".sspak";
             Files.write(Paths.get("/tmp/" + filename), response.getBody());
             return filename;
         } catch (Exception e) {
