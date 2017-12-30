@@ -9,75 +9,94 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.instance.service.domain.Instance;
+import space.swordfish.instance.service.repository.InstanceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class EC2CreateImpl implements EC2Create {
 
-	private final AmazonEC2Async amazonEC2Async;
-	private final Auth0Service auth0Service;
-	private final EC2Sync ec2Sync;
-	@Value("${aws.defaults.securityGroup}")
-	private String defaultSecurityGroupIds;
+    @Autowired
+    private InstanceRepository instanceRepository;
 
-	@Autowired
-	public EC2CreateImpl(AmazonEC2Async amazonEC2Async, Auth0Service auth0Service,
-			EC2Sync ec2Sync) {
+    @Autowired
+    private AmazonEC2Async amazonEC2Async;
 
-		this.amazonEC2Async = amazonEC2Async;
-		this.auth0Service = auth0Service;
-		this.ec2Sync = ec2Sync;
-	}
+    @Autowired
+    private Auth0Service auth0Service;
 
-	@Override
-	public void create(Instance instance) {
-		String userId = auth0Service.getUserId(instance.getUserToken());
-		instance.setUserId(userId);
+    @Autowired
+    private EC2KeyPair keyPair;
 
-		List<Tag> tags = new ArrayList<>();
-		tags.add(new Tag("Name", instance.getName()));
-		tags.add(new Tag("Production", String.valueOf(instance.isProduction())));
-		tags.add(new Tag("UserId", userId));
-		tags.add(new Tag("Swordfish", "true"));
+    @Autowired
+    private EC2Sync ec2Sync;
 
-		TagSpecification tagSpecification = new TagSpecification();
-		tagSpecification.setTags(tags);
-		tagSpecification.setResourceType(ResourceType.Instance);
+    @Value("${aws.defaults.securityGroup}")
+    private String defaultSecurityGroupIds;
 
-		RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-				.withInstanceType(instance.getInstanceType())
-				.withImageId(instance.getImageId()).withMinCount(1).withMaxCount(1)
-				.withSecurityGroupIds(defaultSecurityGroupIds)
-				.withKeyName(instance.getKeyName()).withSubnetId(instance.getSubnetId())
-				.withTagSpecifications(tagSpecification);
+    @Override
+    public void create(Instance instance) {
+        String userId = auth0Service.getUserId(instance.getUserToken());
+        String keyName = keyPair.setName(instance);
 
-		amazonEC2Async.runInstancesAsync(runInstancesRequest,
-				new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
-					@Override
-					public void onError(Exception exception) {
-						log.warn("something went wrong creating the server {}",
-								exception.getLocalizedMessage());
-					}
+        // Custom data
+        instance.setKeyName(keyName);
+        instance.setKeyBlob(keyPair.create(instance));
+        instance.setUserId(auth0Service.getUserId(instance.getUserToken()));
+        instance.setUserName(auth0Service.getUserName(userId));
+        instance.setUserPicture(auth0Service.getUserProfilePicture(userId));
 
-					@Override
-					public void onSuccess(RunInstancesRequest request,
-							RunInstancesResult result) {
-						List<com.amazonaws.services.ec2.model.Instance> instances = result
-								.getReservation().getInstances();
+        List<Tag> tags = new ArrayList<>();
+        tags.add(new Tag("Name", instance.getName()));
+        tags.add(new Tag("Production", String.valueOf(instance.isProduction())));
+        tags.add(new Tag("UserId", userId));
+        tags.add(new Tag("Swordfish", "true"));
 
-						for (com.amazonaws.services.ec2.model.Instance instance : instances) {
+        TagSpecification tagSpecification = new TagSpecification();
+        tagSpecification.setTags(tags);
+        tagSpecification.setResourceType(ResourceType.Instance);
 
-							ec2Sync.syncByInstanceId(instance.getInstanceId());
-							log.info("Created new instance {}", instance);
-							amazonEC2Async.waiters().instanceRunning().runAsync(
-									ec2Sync.describeInstancesRequestWaiterParameters(
-											instance.getInstanceId()),
-									ec2Sync.describeInstancesRequestWaiterHandler());
-						}
-					}
-				});
-	}
+        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+                .withInstanceType(instance.getInstanceType())
+                .withImageId(instance.getImageId())
+                .withMinCount(1)
+                .withMaxCount(1)
+                .withSecurityGroupIds(defaultSecurityGroupIds)
+                .withKeyName(keyName)
+                .withSubnetId(instance.getSubnetId())
+                .withTagSpecifications(tagSpecification);
+
+        amazonEC2Async.runInstancesAsync(runInstancesRequest,
+                new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
+                    @Override
+                    public void onError(Exception exception) {
+                        log.warn("something went wrong creating the server {}",
+                                exception.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(RunInstancesRequest request, RunInstancesResult result) {
+                        List<com.amazonaws.services.ec2.model.Instance> instances = result
+                                .getReservation().getInstances();
+
+                        for (com.amazonaws.services.ec2.model.Instance awsInstance : instances) {
+                            instance.setInstanceId(awsInstance.getInstanceId());
+                            instance.setId(createUniqueId(instance));
+
+                            instanceRepository.save(instance);
+
+                            amazonEC2Async.waiters().instanceRunning().runAsync(ec2Sync.describeInstancesRequestWaiterParameters(instance), ec2Sync.describeInstancesRequestWaiterHandler());
+                        }
+                    }
+                });
+    }
+
+    private String createUniqueId(Instance instance) {
+        return UUID.nameUUIDFromBytes(instance.getInstanceId().getBytes()).toString();
+    }
+
 }
+

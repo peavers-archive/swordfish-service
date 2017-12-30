@@ -1,11 +1,10 @@
 package space.swordfish.instance.service.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
 import space.swordfish.instance.service.service.EC2Sync;
@@ -31,8 +30,6 @@ class StartupListener {
 	@EventListener(ApplicationReadyEvent.class)
 	public void syncInstances() {
 		log.info("syncing instances from aws...");
-
-		ec2Sync.syncAll();
 	}
 
 	/**

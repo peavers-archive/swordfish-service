@@ -1,15 +1,14 @@
 package space.swordfish.instance.service.task;
 
-import javax.annotation.PostConstruct;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
 import space.swordfish.instance.service.service.EC2Sync;
+
+import javax.annotation.PostConstruct;
 
 @Slf4j
 @Component
@@ -39,7 +38,7 @@ public class InstanceFetchTask {
 
 		@Override
 		public void run() {
-			ec2Sync.syncAll();
-		}
+
+        }
 	}
 }

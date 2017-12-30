@@ -2,241 +2,124 @@ package space.swordfish.instance.service.service;
 
 import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.services.ec2.AmazonEC2Async;
-import com.amazonaws.services.ec2.model.*;
+import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
+import com.amazonaws.services.ec2.model.DescribeInstancesResult;
+import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.waiters.WaiterHandler;
 import com.amazonaws.waiters.WaiterParameters;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.services.NotificationService;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
 public class EC2SyncImpl implements EC2Sync {
 
-	private final InstanceRepository instanceRepository;
-	private final AmazonEC2Async amazonEC2Async;
-	private final JsonTransformService jsonTransformService;
-	private final Auth0Service auth0Service;
-	private final NotificationService notificationService;
+    @Autowired
+    private InstanceRepository instanceRepository;
 
-	@Autowired
-	public EC2SyncImpl(InstanceRepository instanceRepository,
-			AmazonEC2Async amazonEC2Async, JsonTransformService jsonTransformService,
-			Auth0Service auth0Service, NotificationService notificationService) {
-		this.instanceRepository = instanceRepository;
-		this.amazonEC2Async = amazonEC2Async;
-		this.jsonTransformService = jsonTransformService;
-		this.auth0Service = auth0Service;
-		this.notificationService = notificationService;
-	}
+    @Autowired
+    private AmazonEC2Async amazonEC2Async;
 
-	/**
-	 * Handles the saving into the database, however before doing the actual
-	 * syncByInstanceId operation, go out and double check the data from AWS. This is
-	 * useful for when things like public IPs take a few extra seconds to syncAll through.
-	 *
-	 * @param instanceId String
-	 */
-	@Override
-	public void syncByInstanceId(String instanceId) {
-		amazonEC2Async.describeInstancesAsync(
-				new DescribeInstancesRequest().withInstanceIds(instanceId),
-				new AsyncHandler<DescribeInstancesRequest, DescribeInstancesResult>() {
+    @Autowired
+    private JsonTransformService jsonTransformService;
 
-					private void save(
-							com.amazonaws.services.ec2.model.Instance awsInstance) {
-						Instance instance = instanceBuilder(awsInstance);
+    @Autowired
+    private NotificationService notificationService;
 
-						instanceRepository.save(instance);
+    /**
+     * Handles the saving into the database, however before doing the actual
+     * syncByInstanceId operation, go out and double check the data from AWS. This is
+     * useful for when things like public IPs take a few extra seconds to syncAll through.
+     */
+    @Override
+    public Instance syncByInstanceId(Instance instance) {
+        amazonEC2Async.describeInstancesAsync(
+                new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId()),
+                new AsyncHandler<DescribeInstancesRequest, DescribeInstancesResult>() {
 
-						log.info("Syncing server {}", instance);
+                    private void save(com.amazonaws.services.ec2.model.Instance awsInstance) {
+                        instance.setTags(awsInstance.getTags());
+                        instance.setInstanceType(awsInstance.getInstanceType());
+                        instance.setImageId(awsInstance.getImageId());
+                        instance.setSecurityGroupIds(awsInstance.getSecurityGroups());
+                        instance.setKeyName(awsInstance.getKeyName());
+                        instance.setSubnetId(awsInstance.getSubnetId());
+                        instance.setInstanceId(awsInstance.getInstanceId());
+                        instance.setState(awsInstance.getState().getName());
+                        instance.setPublicIp(awsInstance.getPublicIpAddress());
+                        instance.setPrivateIp(awsInstance.getPrivateIpAddress());
+                        instance.setCreated(awsInstance.getLaunchTime());
 
-						notificationService.send("server_refresh", "server_refresh",
-								jsonTransformService.write(instance));
-					}
+                        instanceRepository.save(instance);
 
-					@Override
-					public void onError(Exception exception) {
-						log.warn("something went wrong saving the server {}",
-								exception.getLocalizedMessage());
-					}
+                        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(instance));
+                    }
 
-					@Override
-					public void onSuccess(DescribeInstancesRequest request,
-							DescribeInstancesResult describeInstancesResult) {
-						describeInstancesResult.getReservations()
-								.forEach(reservation -> reservation.getInstances()
-										.forEach(this::save));
-					}
-				});
-	}
+                    @Override
+                    public void onError(Exception exception) {
+                        log.warn("something went wrong saving the server {}",
+                                exception.getLocalizedMessage());
+                    }
 
-	@Override
-	public void syncAll() {
-		amazonEC2Async.describeInstancesAsync(new DescribeInstancesRequest(),
-				new AsyncHandler<DescribeInstancesRequest, DescribeInstancesResult>() {
+                    @Override
+                    public void onSuccess(DescribeInstancesRequest request,
+                                          DescribeInstancesResult describeInstancesResult) {
+                        describeInstancesResult.getReservations()
+                                .forEach(reservation -> reservation.getInstances()
+                                        .forEach(this::save));
+                    }
+                });
 
-					/**
-					 * Writes the instance to storage, send notification to frontend
-					 * client
-					 * @param awsInstance Instance data from Amazon
-					 */
-					private void save(
-							com.amazonaws.services.ec2.model.Instance awsInstance) {
-						Instance instance = instanceBuilder(awsInstance);
+        return instance;
+    }
 
-						boolean swordfish = instance.getTags().stream()
-								.filter(key -> key.equals("swordfish")).findFirst()
-								.equals(true);
 
-						if (!instance.getState().equals("terminated") && swordfish) {
-							instanceRepository.save(instance);
+    @Override
+    public Instance syncStateChange(InstanceStateChange stateChange) {
+        Instance instance = instanceRepository
+                .findByInstanceId(stateChange.getInstanceId());
+        instance.setState(stateChange.getCurrentState().getName());
 
-							notificationService.send("server_refresh", "server_refresh",
-									jsonTransformService.write(instance));
-						}
-					}
+        instanceRepository.save(instance);
 
-					@Override
-					public void onError(Exception exception) {
-						log.warn("something went wrong syncing the server {}",
-								exception.getLocalizedMessage());
-					}
+        return instance;
+    }
 
-					@Override
-					public void onSuccess(DescribeInstancesRequest request,
-							DescribeInstancesResult describeInstancesResult) {
-						describeInstancesResult.getReservations()
-								.forEach(reservation -> reservation.getInstances()
-										.forEach(this::save));
+    @Override
+    public WaiterParameters<DescribeInstancesRequest> describeInstancesRequestWaiterParameters(
+            Instance instance) {
+        DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+                .withInstanceIds(instance.getInstanceId());
 
-						// Code below removes instances from the Database that are no
-						// longer on AWS.
-						List<com.amazonaws.services.ec2.model.Instance> awsInstances = new ArrayList<>();
-						describeInstancesResult.getReservations().stream()
-								.map(Reservation::getInstances)
-								.forEach(awsInstances::addAll);
+        return new WaiterParameters<DescribeInstancesRequest>()
+                .withRequest(describeInstancesRequest);
+    }
 
-						Collection<String> localInstanceIds = new ArrayList<>();
-						for (Instance instance : instanceRepository.findAll()) {
-							localInstanceIds.add(instance.getInstanceId());
-						}
+    @Override
+    public WaiterHandler<DescribeInstancesRequest> describeInstancesRequestWaiterHandler() {
 
-						Collection<String> awsInstanceIds = new ArrayList<>();
-						for (com.amazonaws.services.ec2.model.Instance awsInstance : awsInstances) {
-							awsInstanceIds.add(awsInstance.getInstanceId());
-						}
+        return new WaiterHandler<DescribeInstancesRequest>() {
+            @Override
+            public void onWaitSuccess(DescribeInstancesRequest request) {
+                List<String> instanceIds = request.getInstanceIds();
 
-						List<String> sourceList = new ArrayList<>(awsInstanceIds);
-						List<String> destinationList = new ArrayList<>(localInstanceIds);
+                for (String instanceId : instanceIds) {
+                    syncByInstanceId(instanceRepository.findByInstanceId(instanceId));
+                }
+            }
 
-						destinationList.removeAll(sourceList);
-
-						for (String instanceId : destinationList) {
-							instanceRepository.deleteByInstanceId(instanceId);
-						}
-					}
-				});
-	}
-
-	private Instance instanceBuilder(
-			com.amazonaws.services.ec2.model.Instance awsInstance) {
-		List<Tag> tags = awsInstance.getTags();
-
-		String name = "unknown";
-		String userId = "unknown";
-		boolean production = false;
-
-		if (!tags.isEmpty()) {
-			for (Tag tag : tags) {
-				if (tag.getKey().equals("Name")) {
-					name = tag.getValue();
-				}
-
-				if (tag.getKey().equals("Production")) {
-					production = Boolean.valueOf(tag.getValue());
-				}
-
-				if (tag.getKey().equals("UserId")) {
-					userId = tag.getValue();
-				}
-			}
-		}
-
-		Instance instance = new Instance();
-
-		instance.setId(UUID.nameUUIDFromBytes(awsInstance.getInstanceId().getBytes())
-				.toString());
-		instance.setTags(awsInstance.getTags());
-		instance.setInstanceType(awsInstance.getInstanceType());
-		instance.setImageId(awsInstance.getImageId());
-		instance.setSecurityGroupIds(awsInstance.getSecurityGroups());
-		instance.setKeyName(awsInstance.getKeyName());
-		instance.setSubnetId(awsInstance.getSubnetId());
-		instance.setInstanceId(awsInstance.getInstanceId());
-		instance.setState(awsInstance.getState().getName());
-		instance.setPublicIp(awsInstance.getPublicIpAddress());
-		instance.setPrivateIp(awsInstance.getPrivateIpAddress());
-		instance.setCreated(awsInstance.getLaunchTime());
-		instance.setName(name);
-		instance.setProduction(production);
-		instance.setUserId(userId);
-		instance.setUserName(auth0Service.getUserName(userId));
-		instance.setUserPicture(auth0Service.getUserProfilePicture(userId));
-
-		return instance;
-	}
-
-	@Override
-	public WaiterParameters<DescribeInstancesRequest> describeInstancesRequestWaiterParameters(
-			String instanceId) {
-		DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
-				.withInstanceIds(instanceId);
-
-		return new WaiterParameters<DescribeInstancesRequest>()
-				.withRequest(describeInstancesRequest);
-	}
-
-	@Override
-	public WaiterHandler<DescribeInstancesRequest> describeInstancesRequestWaiterHandler() {
-		return new WaiterHandler<DescribeInstancesRequest>() {
-			@Override
-			public void onWaitSuccess(DescribeInstancesRequest request) {
-				List<String> instanceIds = request.getInstanceIds();
-
-				for (String instanceId : instanceIds) {
-					syncByInstanceId(instanceId);
-				}
-			}
-
-			@Override
-			public void onWaitFailure(Exception e) {
-				log.warn("something went wrong waiting for AWS {}",
-						e.getLocalizedMessage());
-			}
-		};
-	}
-
-	@Override
-	public void saveStateChange(InstanceStateChange stateChange) {
-		Instance instance = instanceRepository
-				.findByInstanceId(stateChange.getInstanceId());
-		instance.setState(stateChange.getCurrentState().getName());
-
-		instanceRepository.save(instance);
-
-		notificationService.send("server_refresh", "server_refresh",
-				jsonTransformService.write(instance));
-	}
-
+            @Override
+            public void onWaitFailure(Exception e) {
+                log.warn("something went wrong waiting for AWS {}",
+                        e.getLocalizedMessage());
+            }
+        };
+    }
 }
