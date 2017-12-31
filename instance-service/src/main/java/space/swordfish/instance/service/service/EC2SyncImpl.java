@@ -109,6 +109,13 @@ public class EC2SyncImpl implements EC2Sync {
     }
 
     private void save(com.amazonaws.services.ec2.model.Instance awsInstance, Instance instance) {
+
+        // Remove terminated servers
+        if (awsInstance.getState().getName().equals("terminated")) {
+            instanceRepository.deleteByInstanceId(awsInstance.getInstanceId());
+            return;
+        }
+
         instance.setTags(awsInstance.getTags());
         instance.setInstanceType(awsInstance.getInstanceType());
         instance.setImageId(awsInstance.getImageId());
