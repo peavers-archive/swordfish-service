@@ -24,7 +24,7 @@ public class QueueListener {
     @Autowired
     private NotificationService notificationService;
 
-    @MessageMapping("${vcap.application.instance_id:i-0efc358f7ab9d4f42}")
+    @MessageMapping("${aws.channel}")
     public void instanceCommandHandler(String payload) {
         Snapshot snapshot = jsonTransformService.read(Snapshot.class, payload);
 
