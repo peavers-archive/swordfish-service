@@ -14,12 +14,6 @@ import space.swordfish.instance.service.service.*;
 @EnableSqs
 public class QueueListener {
 
-    private static final String START = "start";
-    private static final String STOP = "stop";
-    private static final String REBOOT = "reboot";
-    private static final String CREATE = "create";
-    private static final String TERMINATE = "terminate";
-
     @Autowired
     private EC2Create ec2Create;
 
@@ -38,7 +32,6 @@ public class QueueListener {
     @Autowired
     private JsonTransformService jsonTransformService;
 
-
     /**
      * Reads events from InstanceQueue and determines what to do with them.
      *
@@ -46,39 +39,28 @@ public class QueueListener {
      */
     @MessageMapping(value = "${queues.instanceEvents}")
     public void instanceCommandHandler(String payload) {
-
-        log.info("Payload {}", payload);
-
         Instance instance = jsonTransformService.read(Instance.class, payload);
 
-        if (instance.getSwordfishCommand() == null) {
-            log.warn("incorrect object passed in {}", instance);
-            return;
-        }
-
         switch (instance.getSwordfishCommand()) {
-            case START: {
+            case "start": {
                 ec2Start.start(instance.getInstanceId());
                 break;
             }
-            case STOP: {
+            case "stop": {
                 ec2Stop.stop(instance.getInstanceId());
                 break;
             }
-            case CREATE: {
+            case "create": {
                 ec2Create.create(instance);
                 break;
             }
-            case REBOOT: {
+            case "reboot": {
                 ec2Reboot.reboot(instance.getInstanceId());
                 break;
             }
-            case TERMINATE: {
+            case "terminate": {
                 ec2Terminate.terminate(instance.getInstanceId());
                 break;
-            }
-            default: {
-                log.info("unknown event type {}", instance.getSwordfishCommand());
             }
         }
     }

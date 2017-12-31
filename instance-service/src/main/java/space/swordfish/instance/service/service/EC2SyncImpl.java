@@ -48,25 +48,6 @@ public class EC2SyncImpl implements EC2Sync {
                 new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId()),
                 new AsyncHandler<DescribeInstancesRequest, DescribeInstancesResult>() {
 
-                    private void save(com.amazonaws.services.ec2.model.Instance awsInstance) {
-                        instance.setTags(awsInstance.getTags());
-                        instance.setInstanceType(awsInstance.getInstanceType());
-                        instance.setImageId(awsInstance.getImageId());
-                        instance.setSecurityGroupIds(awsInstance.getSecurityGroups());
-                        instance.setKeyName(awsInstance.getKeyName());
-                        instance.setSubnetId(awsInstance.getSubnetId());
-                        instance.setInstanceId(awsInstance.getInstanceId());
-                        instance.setState(awsInstance.getState().getName());
-                        instance.setPublicIp(awsInstance.getPublicIpAddress());
-                        instance.setPrivateIp(awsInstance.getPrivateIpAddress());
-                        instance.setCreated(awsInstance.getLaunchTime());
-                        instance.setUserPicture(auth0Service.getUser(instance.getUserId()).getUserMetadata().containsKey("picture") ? (String) auth0Service.getUser(instance.getUserId()).getUserMetadata().get("picture") : auth0Service.getUserProfilePicture(instance.getUserId()));
-
-                        instanceRepository.save(instance);
-
-                        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(instance));
-                    }
-
                     @Override
                     public void onError(Exception exception) {
                         log.warn("something went wrong saving the server {}",
@@ -78,13 +59,12 @@ public class EC2SyncImpl implements EC2Sync {
                                           DescribeInstancesResult describeInstancesResult) {
                         describeInstancesResult.getReservations()
                                 .forEach(reservation -> reservation.getInstances()
-                                        .forEach(this::save));
+                                        .forEach(aws -> save(aws, instance)));
                     }
                 });
 
         return instance;
     }
-
 
     @Override
     public Instance syncStateChange(InstanceStateChange stateChange) {
@@ -126,5 +106,24 @@ public class EC2SyncImpl implements EC2Sync {
                         e.getLocalizedMessage());
             }
         };
+    }
+
+    private void save(com.amazonaws.services.ec2.model.Instance awsInstance, Instance instance) {
+        instance.setTags(awsInstance.getTags());
+        instance.setInstanceType(awsInstance.getInstanceType());
+        instance.setImageId(awsInstance.getImageId());
+        instance.setSecurityGroupIds(awsInstance.getSecurityGroups());
+        instance.setKeyName(awsInstance.getKeyName());
+        instance.setSubnetId(awsInstance.getSubnetId());
+        instance.setInstanceId(awsInstance.getInstanceId());
+        instance.setState(awsInstance.getState().getName());
+        instance.setPublicIp(awsInstance.getPublicIpAddress());
+        instance.setPrivateIp(awsInstance.getPrivateIpAddress());
+        instance.setCreated(awsInstance.getLaunchTime());
+        instance.setUserPicture(auth0Service.getUser(instance.getUserId()).getUserMetadata().containsKey("picture") ? (String) auth0Service.getUser(instance.getUserId()).getUserMetadata().get("picture") : auth0Service.getUserProfilePicture(instance.getUserId()));
+
+        instanceRepository.save(instance);
+
+        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(instance));
     }
 }
