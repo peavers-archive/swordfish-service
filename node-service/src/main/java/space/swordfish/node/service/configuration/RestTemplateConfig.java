@@ -33,7 +33,6 @@ public class RestTemplateConfig {
 }
 
 class BasicAuthRestTemplate extends RestTemplate {
-
     private String username;
     private String password;
 
@@ -57,7 +56,6 @@ class BasicAuthRestTemplate extends RestTemplate {
 }
 
 class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
-
     private String username;
     private String password;
 
