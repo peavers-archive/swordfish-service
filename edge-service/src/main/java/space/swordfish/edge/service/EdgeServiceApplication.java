@@ -7,7 +7,8 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan({ "space.swordfish.*" })
+@ComponentScan({"space.swordfish.common.*"})
+@ComponentScan({"space.swordfish.edge.*"})
 @SpringBootApplication
 @EnableZuulProxy
 @EnableHystrix
