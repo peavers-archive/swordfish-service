@@ -26,6 +26,8 @@ public class QueueListener {
 
     @MessageMapping("${aws.channel}")
     public void instanceCommandHandler(String payload) {
+        log.info("Payload {}", payload);
+
         Snapshot snapshot = jsonTransformService.read(Snapshot.class, payload);
 
         if (downloadService.writeSnapshot(downloadService.downloadSnapshot(snapshot), snapshot) != null) {
