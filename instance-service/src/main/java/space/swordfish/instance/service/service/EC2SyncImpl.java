@@ -10,6 +10,7 @@ import com.amazonaws.waiters.WaiterParameters;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.services.NotificationService;
 import space.swordfish.instance.service.domain.Instance;
@@ -33,13 +34,16 @@ public class EC2SyncImpl implements EC2Sync {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private Auth0Service auth0Service;
+
     /**
      * Handles the saving into the database, however before doing the actual
-     * syncByInstanceId operation, go out and double check the data from AWS. This is
+     * sync operation, go out and double check the data from AWS. This is
      * useful for when things like public IPs take a few extra seconds to syncAll through.
      */
     @Override
-    public Instance syncByInstanceId(Instance instance) {
+    public Instance sync(Instance instance) {
         amazonEC2Async.describeInstancesAsync(
                 new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId()),
                 new AsyncHandler<DescribeInstancesRequest, DescribeInstancesResult>() {
@@ -56,6 +60,7 @@ public class EC2SyncImpl implements EC2Sync {
                         instance.setPublicIp(awsInstance.getPublicIpAddress());
                         instance.setPrivateIp(awsInstance.getPrivateIpAddress());
                         instance.setCreated(awsInstance.getLaunchTime());
+                        instance.setUserPicture(auth0Service.getUser(instance.getUserId()).getUserMetadata().containsKey("picture") ? (String) auth0Service.getUser(instance.getUserId()).getUserMetadata().get("picture") : auth0Service.getUserProfilePicture(instance.getUserId()));
 
                         instanceRepository.save(instance);
 
@@ -111,7 +116,7 @@ public class EC2SyncImpl implements EC2Sync {
                 List<String> instanceIds = request.getInstanceIds();
 
                 for (String instanceId : instanceIds) {
-                    syncByInstanceId(instanceRepository.findByInstanceId(instanceId));
+                    sync(instanceRepository.findByInstanceId(instanceId));
                 }
             }
 

@@ -47,7 +47,6 @@ public class EC2CreateImpl implements EC2Create {
         instance.setKeyBlob(keyPair.create(instance));
         instance.setUserId(auth0Service.getUserId(instance.getUserToken()));
         instance.setUserName(auth0Service.getUserName(userId));
-        instance.setUserPicture(auth0Service.getUserProfilePicture(userId));
 
         List<Tag> tags = new ArrayList<>();
         tags.add(new Tag("Name", instance.getName()));

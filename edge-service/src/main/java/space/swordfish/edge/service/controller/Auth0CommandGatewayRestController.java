@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * This is experimental, will need to be moved to a user-service at some point.
+ */
 @Slf4j
 @RestController
 public class Auth0CommandGatewayRestController {

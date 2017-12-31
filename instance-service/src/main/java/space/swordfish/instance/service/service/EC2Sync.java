@@ -8,7 +8,7 @@ import space.swordfish.instance.service.domain.Instance;
 
 public interface EC2Sync {
 
-    Instance syncByInstanceId(Instance instance);
+    Instance sync(Instance instance);
 
     Instance syncStateChange(InstanceStateChange stateChange);
 

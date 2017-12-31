@@ -2,10 +2,11 @@ package space.swordfish.instance.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
+import space.swordfish.instance.service.domain.Instance;
+import space.swordfish.instance.service.repository.InstanceRepository;
 import space.swordfish.instance.service.service.EC2Sync;
 
 import javax.annotation.PostConstruct;
@@ -14,31 +15,34 @@ import javax.annotation.PostConstruct;
 @Component
 public class InstanceFetchTask {
 
-	private final EC2Sync ec2Sync;
-	private final ThreadPoolTaskScheduler taskScheduler;
+    @Autowired
+    private EC2Sync ec2Sync;
 
-	@Autowired
-	public InstanceFetchTask(EC2Sync ec2Sync,
-			@Qualifier("threadPoolTaskScheduler") ThreadPoolTaskScheduler taskScheduler) {
-		this.ec2Sync = ec2Sync;
-		this.taskScheduler = taskScheduler;
-	}
+    @Autowired
+    private ThreadPoolTaskScheduler taskScheduler;
 
-	@PostConstruct
-	public void scheduleRunnableWithCronTrigger() {
-		CronTrigger cronTrigger = new CronTrigger("0 0/30 * * * ?");
+    @Autowired
+    private InstanceRepository instanceRepository;
 
-		taskScheduler.schedule(new RunnableTask(), cronTrigger);
-	}
+    @PostConstruct
+    public void scheduleRunnableWithCronTrigger() {
+        CronTrigger cronTrigger = new CronTrigger("0 0/5 * * * ?");
 
-	/**
-	 * Thread for finding new instances on AWS when the cron-trigger stipulates
-	 */
-	class RunnableTask implements Runnable {
+        taskScheduler.schedule(new RunnableTask(), cronTrigger);
+    }
 
-		@Override
-		public void run() {
+    /**
+     * Thread for finding new instances on AWS when the cron-trigger stipulates
+     */
+    class RunnableTask implements Runnable {
 
+        @Override
+        public void run() {
+            Iterable<Instance> instances = instanceRepository.findAll();
+
+            for (Instance instance : instances) {
+                ec2Sync.sync(instance);
+            }
         }
-	}
+    }
 }
