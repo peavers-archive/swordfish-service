@@ -44,8 +44,6 @@ public class RestoreCommandGatewayRestController {
     @PostMapping("/stack-events")
     public ResponseEntity<String> event(@RequestBody String payload) {
         try {
-            log.info("Stack event payload {}", payload);
-
             String result = java.net.URLDecoder.decode(payload, "UTF-8");
             ObjectMapper objectMapper = new ObjectMapper();
 
