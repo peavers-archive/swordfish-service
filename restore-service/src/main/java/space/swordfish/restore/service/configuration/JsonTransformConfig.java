@@ -27,4 +27,13 @@ public class JsonTransformConfig {
 
         return new JsonTransformServiceImpl(resourceConverter);
     }
+
+    @Bean
+    public ResourceConverter resourceConverter() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
+
+        return new ResourceConverter(objectMapper, Snapshot.class, Stack.class, StackEvent.class, Transfer.class,
+                Notification.class);
+    }
 }
