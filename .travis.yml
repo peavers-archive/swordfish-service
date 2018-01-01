@@ -13,6 +13,10 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+notifications:
+  slack:
+    secure: uJX0U18vL6MDB8Ez6JY5C5WEbQb0fNIHU/v041tkKhyQgP6iCfwGWBnIXTJO0zzP4m4pgP1gSU04Ajn2rQUX0aPvFvBr/BEUMS8p2B8obx43RBMisAe4JIEBLwh0PihF0El5aUfc+uezJ//LZgKBIP8Qmcb/18yoW7L3qOncKqaLy7uLfvRmknPCPvsAvnEv+s46MM0/90hrydd0REevGbsJzRdT7fV6weRzS/rb1/stbSCajtEV14+GAy3XuLe694Pbj0QiaDyxzGbr3zCpYt6S928dr4+gTUoMn3tylHUuIWc81Ffi26e6fC1WkwTMBx5mPZ6eSM4p2zNCQe33zCP8YS0pZ9tBQ0KOpPU8/iFQnBMnuIB1VjI1lsvSuUZnA4lQ3DWaYUQA7fbROtL97MtqMkgph7/53ayew9zFOn8gJPMjivdGXIEgyJqpNbPVC0Tu+v8fpyDv8LBYI7/v1g1/8eRpsahFzNZM8OduCBuovszycZlxpg7pnY3YFNKVwh8996i+TePAvRPw/TybU5lYpsFFNYhwNjQkld2c+KWl5lUY4OQ8yvdiPaoxZ2B8hHQf8ZtCzSIf/DoPyddw5/msdIqxMj4Zohsyo20l9G68sFwTAyuvlY9UbKkKZ1zPTSCF1xKxa5oxCXitM3eizf+kGhjUV+RzxsP3BVgBjv0=
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
