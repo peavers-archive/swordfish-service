@@ -1,4 +1,4 @@
-package swordfish.space.notificationservice.services;
+package space.swordfish.notification.service.services;
 
 public interface PusherService {
 

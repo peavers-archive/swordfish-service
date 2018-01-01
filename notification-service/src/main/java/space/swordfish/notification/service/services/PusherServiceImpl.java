@@ -1,9 +1,8 @@
-package swordfish.space.notificationservice.services;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+package space.swordfish.notification.service.services;
 
 import com.pusher.rest.Pusher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PusherServiceImpl implements PusherService {

@@ -1,4 +1,4 @@
-package swordfish.space.notificationservice.listener;
+package space.swordfish.notification.service.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.domain.Notification;
-import swordfish.space.notificationservice.services.PusherService;
+import space.swordfish.notification.service.services.PusherService;
 
 @Slf4j
 @Service
