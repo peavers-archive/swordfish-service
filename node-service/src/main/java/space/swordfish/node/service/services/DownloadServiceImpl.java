@@ -5,6 +5,7 @@ import org.springframework.http.*;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.services.NotificationService;
 import space.swordfish.node.service.domain.Snapshot;
 
@@ -22,12 +23,15 @@ public class DownloadServiceImpl implements DownloadService {
     @Autowired
     private NotificationService notificationService;
 
+    private JsonTransformService jsonTransformService;
+
     @Override
     public ResponseEntity<byte[]> downloadSnapshot(Snapshot snapshot) {
         String downloadLink = snapshot.getLinks().getLink("download_link").toString();
-        ResponseEntity<byte[]> response = restTemplate.exchange(downloadLink, HttpMethod.GET, downloadHeaders(), byte[].class, "1");
 
-        notificationService.send("restore_event", "restore_info", "Node service downloading snapshot...");
+        notificationService.send("restore_event", "download_info", jsonTransformService.write(snapshot));
+
+        ResponseEntity<byte[]> response = restTemplate.exchange(downloadLink, HttpMethod.GET, downloadHeaders(), byte[].class, "1");
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return response;

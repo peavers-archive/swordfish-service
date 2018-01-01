@@ -52,9 +52,9 @@ public class SilverstripeServiceImpl implements SilverstripeService {
                 transferProgress = getTransferProgress(stackEvent.getProjectId(), createResult);
 
                 notificationService.send("restore_event", "restore_info",
-                        "Snapshot building for " + projectId);
+                        jsonTransformService.write(stackEvent));
 
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(2);
 
                 if (transferProgress.getStatus().equals("Failed")) {
                     log.warn("Failed snapshot");
@@ -63,7 +63,7 @@ public class SilverstripeServiceImpl implements SilverstripeService {
             }
 
             notificationService.send("restore_event", "restore_success",
-                    "Snapshot created for " + projectId);
+                    jsonTransformService.write(stackEvent));
 
             ResponseEntity<JsonNode> completeTransferData = silverstripeSnapshot.view(projectId, transferProgress.getSnapshot().getId());
 

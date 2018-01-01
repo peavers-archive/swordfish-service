@@ -26,16 +26,15 @@ public class QueueListener {
 
     @MessageMapping("${aws.channel}")
     public void instanceCommandHandler(String payload) {
-        log.info("Payload {}", payload);
-
         Snapshot snapshot = jsonTransformService.read(Snapshot.class, payload);
 
         if (downloadService.writeSnapshot(downloadService.downloadSnapshot(snapshot), snapshot) != null) {
-            notificationService.send("restore_event", "restore_success",
-                    "Node service snapshot downloaded");
+            notificationService.send("restore_event", "download_success",
+                    jsonTransformService.write(snapshot));
+
         } else {
-            notificationService.send("restore_event", "restore_error",
-                    "Node service snapshot failed!");
+            notificationService.send("restore_event", "download_error",
+                    jsonTransformService.write(snapshot));
         }
 
     }

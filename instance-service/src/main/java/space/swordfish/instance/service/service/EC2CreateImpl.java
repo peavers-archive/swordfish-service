@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import space.swordfish.common.auth.services.Auth0Service;
+import space.swordfish.common.json.services.JsonTransformService;
+import space.swordfish.common.notification.services.NotificationService;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
 
@@ -21,6 +23,12 @@ public class EC2CreateImpl implements EC2Create {
 
     @Autowired
     private InstanceRepository instanceRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private JsonTransformService jsonTransformService;
 
     @Autowired
     private AmazonEC2Async amazonEC2Async;
@@ -76,6 +84,7 @@ public class EC2CreateImpl implements EC2Create {
                             instance.setId(createUniqueId(instance));
 
                             instanceRepository.save(instance);
+                            notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(instance));
 
                             amazonEC2Async.waiters().instanceRunning().runAsync(ec2Sync.describeInstancesRequestWaiterParameters(instance), ec2Sync.describeInstancesRequestWaiterHandler());
                         }
