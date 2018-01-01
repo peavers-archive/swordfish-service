@@ -25,8 +25,8 @@ allprojects {
 subprojects {
     buildscript {
         ext { springBootVersion = '1.5.9.RELEASE' }
-        ext { swordfishCommonVersion = '80ae5c3170' }
-        ext { springCloudDependanceVersion = '1.2.1.RELEASE' }
+        ext { swordfishCommonVersion = 'b8d5496e0e' }
+        ext { springCloudDependanceVersion = '1.2.2.RELEASE' }
     }
 
     apply plugin: 'java'

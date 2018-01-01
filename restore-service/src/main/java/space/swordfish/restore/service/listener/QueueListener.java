@@ -20,20 +20,14 @@ import java.util.concurrent.TimeoutException;
 @EnableSqs
 public class QueueListener {
 
-    private final SilverstripeService silverstripeService;
-
-    private final JsonTransformService jsonTransformService;
-
-    private final QueueMessageService queueMessageService;
+    @Autowired
+    private SilverstripeService silverstripeService;
 
     @Autowired
-    public QueueListener(SilverstripeService silverstripeService,
-                         JsonTransformService jsonTransformService,
-                         QueueMessageService queueMessageService) {
-        this.silverstripeService = silverstripeService;
-        this.jsonTransformService = jsonTransformService;
-        this.queueMessageService = queueMessageService;
-    }
+    private JsonTransformService jsonTransformService;
+
+    @Autowired
+    private QueueMessageService queueMessageService;
 
     /**
      * Reads events from InstanceQueue and determines what to do with them.
