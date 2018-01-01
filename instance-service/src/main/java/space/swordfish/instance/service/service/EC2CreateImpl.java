@@ -45,18 +45,8 @@ public class EC2CreateImpl implements EC2Create {
         // Custom data
         instance.setKeyName(keyName);
         instance.setKeyBlob(keyPair.create(instance));
-        instance.setUserId(auth0Service.getUserId(instance.getUserToken()));
+        instance.setUserId(userId);
         instance.setUserName(auth0Service.getUserName(userId));
-
-        List<Tag> tags = new ArrayList<>();
-        tags.add(new Tag("Name", instance.getName()));
-        tags.add(new Tag("Production", String.valueOf(instance.isProduction())));
-        tags.add(new Tag("UserId", userId));
-        tags.add(new Tag("Swordfish", "true"));
-
-        TagSpecification tagSpecification = new TagSpecification();
-        tagSpecification.setTags(tags);
-        tagSpecification.setResourceType(ResourceType.Instance);
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .withInstanceType(instance.getInstanceType())
@@ -66,7 +56,7 @@ public class EC2CreateImpl implements EC2Create {
                 .withSecurityGroupIds(defaultSecurityGroupIds)
                 .withKeyName(keyName)
                 .withSubnetId(instance.getSubnetId())
-                .withTagSpecifications(tagSpecification);
+                .withTagSpecifications(buildTags(instance));
 
         amazonEC2Async.runInstancesAsync(runInstancesRequest,
                 new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
@@ -91,6 +81,22 @@ public class EC2CreateImpl implements EC2Create {
                         }
                     }
                 });
+    }
+
+    private TagSpecification buildTags(Instance instance) {
+        String userId = auth0Service.getUserId(instance.getUserToken());
+
+        List<Tag> tags = new ArrayList<>();
+        tags.add(new Tag("Name", instance.getName()));
+        tags.add(new Tag("Production", String.valueOf(instance.isProduction())));
+        tags.add(new Tag("UserId", userId));
+        tags.add(new Tag("Swordfish", "true"));
+
+        TagSpecification tagSpecification = new TagSpecification();
+        tagSpecification.setTags(tags);
+        tagSpecification.setResourceType(ResourceType.Instance);
+
+        return tagSpecification;
     }
 
     private String createUniqueId(Instance instance) {
