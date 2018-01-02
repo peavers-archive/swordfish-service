@@ -23,6 +23,7 @@ public class DownloadServiceImpl implements DownloadService {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
     private JsonTransformService jsonTransformService;
 
     @Override
