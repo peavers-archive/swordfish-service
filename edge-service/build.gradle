@@ -5,7 +5,6 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-starter-ribbon')
     compile('org.springframework.cloud:spring-cloud-aws-messaging')
 
-    compile('com.btmatthews.springboot:memcached-spring-boot-starter:1.1.0-SNAPSHOT')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('io.springfox:springfox-swagger2:2.7.0')
 }

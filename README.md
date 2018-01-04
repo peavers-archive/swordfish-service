@@ -28,10 +28,10 @@ docker create \
   --name=letsencrypt \
   -v ~/letsencrypt:/config \
   -e PGID=1000 -e PUID=1000  \
-  -e EMAIL= \
+  -e EMAIL=peavers@gmail.com \
   -e ONLY_SUBDOMAINS=true \
-  -e URL= \
-  -e SUBDOMAINS= \
+  -e URL=swordfish.space \
+  -e SUBDOMAINS=edge-service.swordfish.swordfish \
   -p 443:443 \
   -e TZ=Pacific/Auckland \
   linuxserver/letsencrypt
