@@ -6,5 +6,5 @@ public interface EC2Sync {
 
     Iterable<Instance> getAll();
 
-    Instance getByInstanceId(String instanceId);
+    Instance getByInstance(Instance instance);
 }

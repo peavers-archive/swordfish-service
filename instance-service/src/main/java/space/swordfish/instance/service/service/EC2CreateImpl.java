@@ -18,7 +18,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
     private EC2UserClient ec2UserClient;
 
     @Override
-    public void create(Instance instance) {
+    public void process(Instance instance) {
         String userToken = instance.getUserToken();
         String keyName = ec2KeyPair.setName(instance);
 
@@ -30,7 +30,6 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
         instance.setUserId(auth0Service.getUserIdFromToken(userToken));
 
         instanceRepository.save(instance);
-        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(instance));
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .withInstanceType(instance.getInstanceType())
@@ -42,7 +41,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
                 .withSubnetId(instance.getSubnetId())
                 .withTagSpecifications(buildTags(instance));
 
-        ec2UserClient.amazonEC2Async(userToken).runInstancesAsync(runInstancesRequest,
+        ec2UserClient.amazonEC2Async(instance.getUserId()).runInstancesAsync(runInstancesRequest,
                 new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
                     @Override
                     public void onError(Exception exception) {
@@ -52,12 +51,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
 
                     @Override
                     public void onSuccess(RunInstancesRequest request, RunInstancesResult result) {
-                        List<com.amazonaws.services.ec2.model.Instance> instances = result
-                                .getReservation().getInstances();
 
-                        for (com.amazonaws.services.ec2.model.Instance awsInstance : instances) {
-                            refreshClientInstance(awsInstance.getInstanceId());
-                        }
                     }
                 });
     }

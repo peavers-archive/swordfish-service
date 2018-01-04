@@ -55,12 +55,9 @@ public class InstanceCommandGatewayRestController {
     }
 
     @ApiOperation(value = "Issue a command against a instance.")
-    @RequestMapping(value = "/instances/{id}", method = {RequestMethod.PATCH,
-            RequestMethod.DELETE})
-    public ResponseEntity<String> patch(@RequestBody String payload,
-                                        @PathVariable("id") String id) {
-        this.queueMessagingTemplate.send(queue,
-                MessageBuilder.withPayload(payload).build());
+    @RequestMapping(value = "/instances/{id}", method = {RequestMethod.PATCH, RequestMethod.DELETE})
+    public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
+        this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(payload).build());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

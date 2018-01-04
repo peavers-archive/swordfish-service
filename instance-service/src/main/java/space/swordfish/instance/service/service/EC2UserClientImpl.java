@@ -35,8 +35,7 @@ public class EC2UserClientImpl extends EC2BaseService implements EC2UserClient {
     }
 
     @Override
-    public AmazonEC2Async amazonEC2Async(String token) {
-        String userId = auth0Service.getUserIdFromToken(token);
+    public AmazonEC2Async amazonEC2Async(String userId) {
         String accessKey = auth0Service.getEncryptedUserMetaByKey(userId, "aws_key");
         String secretKey = auth0Service.getEncryptedUserMetaByKey(userId, "aws_secret");
         String region = auth0Service.getEncryptedUserMetaByKey(userId, "aws_region");

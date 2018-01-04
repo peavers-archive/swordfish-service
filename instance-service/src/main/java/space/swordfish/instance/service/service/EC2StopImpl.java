@@ -1,14 +1,12 @@
 package space.swordfish.instance.service.service;
 
 import com.amazonaws.handlers.AsyncHandler;
-import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import space.swordfish.instance.service.domain.Instance;
 
 @Slf4j
 @Service
@@ -18,9 +16,9 @@ public class EC2StopImpl extends EC2BaseService implements EC2Stop {
     private EC2UserClient ec2UserClient;
 
     @Override
-    public void stop(String instanceId) {
-        ec2UserClient.amazonEC2Async().stopInstancesAsync(
-                new StopInstancesRequest().withInstanceIds(instanceId),
+    public void process(Instance instance) {
+        ec2UserClient.amazonEC2Async(instance.getUserId()).stopInstancesAsync(
+                new StopInstancesRequest().withInstanceIds(instance.getInstanceId()),
                 new AsyncHandler<StopInstancesRequest, StopInstancesResult>() {
                     @Override
                     public void onError(Exception exception) {
@@ -29,14 +27,7 @@ public class EC2StopImpl extends EC2BaseService implements EC2Stop {
                     }
 
                     @Override
-                    public void onSuccess(StopInstancesRequest request,
-                                          StopInstancesResult result) {
-                        List<InstanceStateChange> instanceStateChanges = result
-                                .getStoppingInstances();
-
-                        for (InstanceStateChange stateChange : instanceStateChanges) {
-                            refreshClientInstance(instanceId);
-                        }
+                    public void onSuccess(StopInstancesRequest request, StopInstancesResult result) {
                     }
                 });
     }

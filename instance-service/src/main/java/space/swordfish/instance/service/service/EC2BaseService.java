@@ -36,11 +36,7 @@ abstract class EC2BaseService {
         return UUID.nameUUIDFromBytes(seed.getBytes()).toString();
     }
 
-    void refreshClientInstance(String instanceId) {
-        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(ec2Sync.getByInstanceId(instanceId)));
-    }
-
     void refreshClientInstance(Instance instance) {
-        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(ec2Sync.getByInstanceId(instance.getInstanceId())));
+        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(ec2Sync.getByInstance(instance)));
     }
 }

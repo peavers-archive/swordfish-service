@@ -47,7 +47,7 @@ public class InstanceShutdownTask {
             for (Instance instance : instances) {
                 log.info("automatically shutting down {}", instance.getTags());
 
-                ec2Stop.stop(instance.getInstanceId());
+                ec2Stop.process(instance);
             }
         }
     }

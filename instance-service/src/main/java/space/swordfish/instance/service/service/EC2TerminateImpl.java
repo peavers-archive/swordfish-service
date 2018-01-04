@@ -16,15 +16,13 @@ public class EC2TerminateImpl extends EC2BaseService implements EC2Terminate {
     private EC2UserClient ec2UserClient;
 
     @Override
-    public void terminate(String instanceId) {
-        Instance instance = instanceRepository.findByInstanceId(instanceId);
-
+    public void process(Instance instance) {
         if (instance.getKeyName().contains("swordfish-")) {
             ec2KeyPair.delete(instance);
         }
 
-        ec2UserClient.amazonEC2Async().terminateInstancesAsync(
-                new TerminateInstancesRequest().withInstanceIds(instanceId),
+        ec2UserClient.amazonEC2Async(instance.getUserId()).terminateInstancesAsync(
+                new TerminateInstancesRequest().withInstanceIds(instance.getInstanceId()),
                 new AsyncHandler<TerminateInstancesRequest, TerminateInstancesResult>() {
                     @Override
                     public void onError(Exception exception) {
@@ -33,13 +31,11 @@ public class EC2TerminateImpl extends EC2BaseService implements EC2Terminate {
                     }
 
                     @Override
-                    public void onSuccess(TerminateInstancesRequest request,
-                                          TerminateInstancesResult result) {
-                        refreshClientInstance(instanceId);
+                    public void onSuccess(TerminateInstancesRequest request, TerminateInstancesResult result) {
                     }
                 });
 
-        instanceRepository.deleteByInstanceId(instanceId);
+        instanceRepository.delete(instance);
     }
 
 }

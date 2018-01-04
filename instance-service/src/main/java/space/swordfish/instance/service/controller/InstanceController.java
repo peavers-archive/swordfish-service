@@ -2,12 +2,11 @@ package space.swordfish.instance.service.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
-import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import space.swordfish.common.json.services.JsonTransformService;
-import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
 import space.swordfish.instance.service.service.EC2Sync;
 
@@ -17,50 +16,21 @@ import space.swordfish.instance.service.service.EC2Sync;
 public class InstanceController {
 
     @Autowired
-    private InstanceRepository instanceRepository;
+    private EC2Sync ec2Sync;
 
     @Autowired
     private JsonTransformService jsonTransformService;
 
     @Autowired
-    private QueueMessagingTemplate queueMessagingTemplate;
-
-    @Autowired
-    private EC2Sync ec2Sync;
-
-    @Value("${queues.instanceEvents}")
-    private String queue;
+    private InstanceRepository instanceRepository;
 
     @GetMapping()
     public String findAll() {
-        Iterable<Instance> instances = ec2Sync.getAll();
-
-        return jsonTransformService.writeList(instances);
+        return jsonTransformService.writeList(ec2Sync.getAll());
     }
 
     @GetMapping("{id}")
     public String findById(@PathVariable String id) {
-        Instance instance = instanceRepository.findById(id);
-
-        return jsonTransformService.write(instance);
-    }
-
-    @PostMapping()
-    public String post(@RequestBody String payload) {
-        this.queueMessagingTemplate.send(queue,
-                MessageBuilder.withPayload(payload).build());
-        Instance instance = jsonTransformService.read(Instance.class, payload);
-
-        return jsonTransformService.write(instance);
-    }
-
-    @PatchMapping("{id}")
-    @DeleteMapping("{id}")
-    public String patch(@RequestBody String payload, @PathVariable("id") String id) {
-        this.queueMessagingTemplate.send(queue,
-                MessageBuilder.withPayload(payload).build());
-        Instance instance = jsonTransformService.read(Instance.class, payload);
-
-        return jsonTransformService.write(instance);
+        return jsonTransformService.write(instanceRepository.findByInstanceId(id));
     }
 }

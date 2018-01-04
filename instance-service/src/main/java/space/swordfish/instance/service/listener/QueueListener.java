@@ -37,31 +37,29 @@ public class QueueListener {
      *
      * @param payload String representation of a InstanceEvent
      */
-    @MessageMapping(value = "${queues.instanceEvents}")
+    @MessageMapping("${queues.instanceEvents}")
     public void instanceCommandHandler(String payload) {
         Instance instance = jsonTransformService.read(Instance.class, payload);
 
-        log.info("Create Request {}", instance);
-
         switch (instance.getSwordfishCommand()) {
             case "start": {
-                ec2Start.start(instance.getInstanceId());
+                ec2Start.process(instance);
                 break;
             }
             case "stop": {
-                ec2Stop.stop(instance.getInstanceId());
+                ec2Stop.process(instance);
                 break;
             }
             case "create": {
-                ec2Create.create(instance);
+                ec2Create.process(instance);
                 break;
             }
             case "reboot": {
-                ec2Reboot.reboot(instance.getInstanceId());
+                ec2Reboot.process(instance);
                 break;
             }
             case "terminate": {
-                ec2Terminate.terminate(instance.getInstanceId());
+                ec2Terminate.process(instance);
                 break;
             }
         }

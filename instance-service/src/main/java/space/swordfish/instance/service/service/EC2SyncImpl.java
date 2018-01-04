@@ -42,11 +42,9 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
     }
 
     @Override
-    public Instance getByInstanceId(String instanceId) {
-        Instance byInstanceId = instanceRepository.findByInstanceId(instanceId);
-
-        DescribeInstancesRequest request = new DescribeInstancesRequest().withInstanceIds(instanceId);
-        DescribeInstancesResult response = ec2UserClient.amazonEC2Async(byInstanceId.getUserToken()).describeInstances(request);
+    public Instance getByInstance(Instance instance) {
+        DescribeInstancesRequest request = new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId());
+        DescribeInstancesResult response = ec2UserClient.amazonEC2Async(instance.getUserId()).describeInstances(request);
 
         return getInstanceDetails(response.getReservations().get(0).getInstances().get(0));
     }
@@ -80,6 +78,12 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
             if (tag.getKey().equals("Production")) {
                 instance.setProduction(Boolean.parseBoolean(tag.getValue()));
             }
+        }
+
+        // Fetch the latest version of user data
+        if (instance.getUserId() != null) {
+            instance.setUserPicture(auth0Service.getUserProfilePicture(instance.getUserId()));
+            instance.setUserName(auth0Service.getUserName(instance.getUserId()));
         }
 
         // Finish up with all the other stuff from AWS

@@ -20,7 +20,7 @@ public class EC2KeyPairImpl extends EC2BaseService implements EC2KeyPair {
     public String create(Instance instance) {
         CreateKeyPairRequest createKeyPairRequest = new CreateKeyPairRequest();
         createKeyPairRequest.withKeyName(instance.getKeyName());
-        CreateKeyPairResult createKeyPairResult = ec2UserClient.amazonEC2Async(instance.getUserToken()).createKeyPair(createKeyPairRequest);
+        CreateKeyPairResult createKeyPairResult = ec2UserClient.amazonEC2Async(instance.getUserId()).createKeyPair(createKeyPairRequest);
 
         KeyPair keyPair = createKeyPairResult.getKeyPair();
 
@@ -37,6 +37,6 @@ public class EC2KeyPairImpl extends EC2BaseService implements EC2KeyPair {
         DeleteKeyPairRequest deleteKeyPairRequest = new DeleteKeyPairRequest();
         deleteKeyPairRequest.withKeyName(instance.getKeyName());
 
-        ec2UserClient.amazonEC2Async(instance.getUserToken()).deleteKeyPair(deleteKeyPairRequest);
+        ec2UserClient.amazonEC2Async(instance.getUserId()).deleteKeyPair(deleteKeyPairRequest);
     }
 }
