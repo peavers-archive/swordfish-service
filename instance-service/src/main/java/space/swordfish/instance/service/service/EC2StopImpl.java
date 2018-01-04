@@ -7,22 +7,15 @@ import com.amazonaws.services.ec2.model.StopInstancesResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import space.swordfish.instance.service.repository.InstanceRepository;
 
 import java.util.List;
 
 @Slf4j
 @Service
-public class EC2StopImpl implements EC2Stop {
-
-    @Autowired
-    private InstanceRepository instanceRepository;
+public class EC2StopImpl extends EC2BaseService implements EC2Stop {
 
     @Autowired
     private EC2UserClient ec2UserClient;
-
-    @Autowired
-    private EC2Sync ec2Sync;
 
     @Override
     public void stop(String instanceId) {
@@ -40,6 +33,10 @@ public class EC2StopImpl implements EC2Stop {
                                           StopInstancesResult result) {
                         List<InstanceStateChange> instanceStateChanges = result
                                 .getStoppingInstances();
+
+                        for (InstanceStateChange stateChange : instanceStateChanges) {
+                            refreshClientInstance(instanceId);
+                        }
                     }
                 });
     }

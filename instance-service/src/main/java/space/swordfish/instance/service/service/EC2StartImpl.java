@@ -7,22 +7,15 @@ import com.amazonaws.services.ec2.model.StartInstancesResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import space.swordfish.instance.service.repository.InstanceRepository;
 
 import java.util.List;
 
 @Slf4j
 @Service
-public class EC2StartImpl implements EC2Start {
-
-    @Autowired
-    private InstanceRepository instanceRepository;
+public class EC2StartImpl extends EC2BaseService implements EC2Start {
 
     @Autowired
     private EC2UserClient ec2UserClient;
-
-    @Autowired
-    private EC2Sync ec2Sync;
 
     @Override
     public void start(String instanceId) {
@@ -42,7 +35,7 @@ public class EC2StartImpl implements EC2Start {
                                 .getStartingInstances();
 
                         for (InstanceStateChange stateChange : instanceStateChanges) {
-
+                            refreshClientInstance(instanceId);
                         }
                     }
                 });

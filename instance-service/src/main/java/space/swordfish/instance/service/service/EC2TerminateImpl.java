@@ -7,27 +7,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import space.swordfish.instance.service.domain.Instance;
-import space.swordfish.instance.service.repository.InstanceRepository;
 
 @Slf4j
 @Service
-public class EC2TerminateImpl implements EC2Terminate {
-
-    @Autowired
-    private InstanceRepository instanceRepository;
+public class EC2TerminateImpl extends EC2BaseService implements EC2Terminate {
 
     @Autowired
     private EC2UserClient ec2UserClient;
-
-    @Autowired
-    private EC2KeyPair keyPair;
 
     @Override
     public void terminate(String instanceId) {
         Instance instance = instanceRepository.findByInstanceId(instanceId);
 
         if (instance.getKeyName().contains("swordfish-")) {
-            keyPair.delete(instance);
+            ec2KeyPair.delete(instance);
         }
 
         ec2UserClient.amazonEC2Async().terminateInstancesAsync(
@@ -42,8 +35,7 @@ public class EC2TerminateImpl implements EC2Terminate {
                     @Override
                     public void onSuccess(TerminateInstancesRequest request,
                                           TerminateInstancesResult result) {
-                        log.info("successfully terminated instance ", instanceId);
-
+                        refreshClientInstance(instanceId);
                     }
                 });
 

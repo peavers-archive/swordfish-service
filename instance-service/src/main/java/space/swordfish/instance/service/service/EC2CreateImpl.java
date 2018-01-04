@@ -4,31 +4,15 @@ import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.services.ec2.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.instance.service.domain.Instance;
-import space.swordfish.instance.service.repository.InstanceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
-public class EC2CreateImpl implements EC2Create {
-
-    @Value("${aws.defaults.securityGroup}")
-    private String defaultSecurityGroupIds;
-
-    @Autowired
-    private InstanceRepository instanceRepository;
-
-    @Autowired
-    private Auth0Service auth0Service;
-
-    @Autowired
-    private EC2KeyPair keyPair;
+public class EC2CreateImpl extends EC2BaseService implements EC2Create {
 
     @Autowired
     private EC2UserClient ec2UserClient;
@@ -36,24 +20,27 @@ public class EC2CreateImpl implements EC2Create {
     @Override
     public void create(Instance instance) {
         String userToken = instance.getUserToken();
-        String keyName = keyPair.setName(instance);
+        String keyName = ec2KeyPair.setName(instance);
 
-        // Custom data
+        // Every key name must be unique, so we use this to build the seed of the ID
+        instance.setId(createUniqueId(keyName));
+
         instance.setKeyName(keyName);
-        instance.setKeyBlob(keyPair.create(instance));
+        instance.setKeyBlob(ec2KeyPair.create(instance));
         instance.setUserId(auth0Service.getUserIdFromToken(userToken));
+
+        instanceRepository.save(instance);
+        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(instance));
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .withInstanceType(instance.getInstanceType())
                 .withImageId(instance.getImageId())
                 .withMinCount(1)
                 .withMaxCount(1)
-                .withSecurityGroupIds(defaultSecurityGroupIds)
+                .withSecurityGroupIds(instance.getSecurityGroupId())
                 .withKeyName(keyName)
                 .withSubnetId(instance.getSubnetId())
                 .withTagSpecifications(buildTags(instance));
-
-        instanceRepository.save(instance);
 
         ec2UserClient.amazonEC2Async(userToken).runInstancesAsync(runInstancesRequest,
                 new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
@@ -65,7 +52,12 @@ public class EC2CreateImpl implements EC2Create {
 
                     @Override
                     public void onSuccess(RunInstancesRequest request, RunInstancesResult result) {
+                        List<com.amazonaws.services.ec2.model.Instance> instances = result
+                                .getReservation().getInstances();
 
+                        for (com.amazonaws.services.ec2.model.Instance awsInstance : instances) {
+                            refreshClientInstance(awsInstance.getInstanceId());
+                        }
                     }
                 });
     }
@@ -84,9 +76,5 @@ public class EC2CreateImpl implements EC2Create {
         tagSpecification.setResourceType(ResourceType.Instance);
 
         return tagSpecification;
-    }
-
-    private String createUniqueId(com.amazonaws.services.ec2.model.Instance instance) {
-        return UUID.nameUUIDFromBytes(instance.getInstanceId().getBytes()).toString();
     }
 }

@@ -8,18 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import space.swordfish.instance.service.domain.Instance;
-import space.swordfish.instance.service.repository.InstanceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
-public class EC2SyncImpl implements EC2Sync {
-
-    @Autowired
-    private InstanceRepository instanceRepository;
+public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
 
     @Autowired
     private EC2UserClient ec2UserClient;
@@ -34,10 +29,10 @@ public class EC2SyncImpl implements EC2Sync {
         for (Reservation reservation : response.getReservations()) {
             for (com.amazonaws.services.ec2.model.Instance instance : reservation.getInstances()) {
 
-                Instance saveAndReturn = saveAndReturn(instance);
+                Instance instanceDetails = getInstanceDetails(instance);
 
-                if (saveAndReturn != null) {
-                    returnedInstances.add(saveAndReturn);
+                if (instanceDetails != null) {
+                    returnedInstances.add(instanceDetails);
                 }
 
             }
@@ -46,7 +41,17 @@ public class EC2SyncImpl implements EC2Sync {
         return returnedInstances;
     }
 
-    private Instance saveAndReturn(com.amazonaws.services.ec2.model.Instance awsInstance) {
+    @Override
+    public Instance getByInstanceId(String instanceId) {
+        Instance byInstanceId = instanceRepository.findByInstanceId(instanceId);
+
+        DescribeInstancesRequest request = new DescribeInstancesRequest().withInstanceIds(instanceId);
+        DescribeInstancesResult response = ec2UserClient.amazonEC2Async(byInstanceId.getUserToken()).describeInstances(request);
+
+        return getInstanceDetails(response.getReservations().get(0).getInstances().get(0));
+    }
+
+    private Instance getInstanceDetails(com.amazonaws.services.ec2.model.Instance awsInstance) {
 
         // Don't show dead servers
         if (awsInstance.getState().getName().equals("terminated")) {
@@ -54,8 +59,7 @@ public class EC2SyncImpl implements EC2Sync {
         }
 
         // Don't show servers that don't belong to swordfish
-        Tag tag = new Tag().withKey("Swordfish").withValue("true");
-        if (!awsInstance.getTags().contains(tag)) {
+        if (!awsInstance.getTags().contains(new Tag().withKey("Swordfish").withValue("true"))) {
             return null;
         }
 
@@ -65,7 +69,21 @@ public class EC2SyncImpl implements EC2Sync {
             instance = new Instance();
         }
 
-        instance.setId(createUniqueId(awsInstance));
+        // Grab the tags and load em into the instance object
+        for (Tag tag : awsInstance.getTags()) {
+            if (tag.getKey().equals("Name")) {
+                instance.setName(tag.getValue());
+            }
+            if (tag.getKey().equals("UserId")) {
+                instance.setUserId(tag.getValue());
+            }
+            if (tag.getKey().equals("Production")) {
+                instance.setProduction(Boolean.parseBoolean(tag.getValue()));
+            }
+        }
+
+        // Finish up with all the other stuff from AWS
+        instance.setId(createUniqueId(awsInstance.getKeyName()));
         instance.setTags(awsInstance.getTags());
         instance.setInstanceType(awsInstance.getInstanceType());
         instance.setImageId(awsInstance.getImageId());
@@ -79,9 +97,5 @@ public class EC2SyncImpl implements EC2Sync {
         instance.setCreated(awsInstance.getLaunchTime());
 
         return instance;
-    }
-
-    private String createUniqueId(com.amazonaws.services.ec2.model.Instance instance) {
-        return UUID.nameUUIDFromBytes(instance.getInstanceId().getBytes()).toString();
     }
 }

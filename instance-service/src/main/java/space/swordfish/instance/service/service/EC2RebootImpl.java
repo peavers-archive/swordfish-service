@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class EC2RebootImpl implements EC2Reboot {
+public class EC2RebootImpl extends EC2BaseService implements EC2Reboot {
 
     @Autowired
     private EC2UserClient ec2UserClient;
@@ -28,7 +28,8 @@ public class EC2RebootImpl implements EC2Reboot {
                     @Override
                     public void onSuccess(RebootInstancesRequest request,
                                           RebootInstancesResult result) {
-                        log.info("rebooted {}", result);
+
+                        refreshClientInstance(instanceId);
                     }
                 });
     }

@@ -11,7 +11,7 @@ import space.swordfish.instance.service.domain.Instance;
 import java.time.Instant;
 
 @Service
-public class EC2KeyPairImpl implements EC2KeyPair {
+public class EC2KeyPairImpl extends EC2BaseService implements EC2KeyPair {
 
     @Autowired
     private EC2UserClient ec2UserClient;

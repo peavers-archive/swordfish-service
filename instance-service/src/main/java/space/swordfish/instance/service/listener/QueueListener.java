@@ -41,6 +41,8 @@ public class QueueListener {
     public void instanceCommandHandler(String payload) {
         Instance instance = jsonTransformService.read(Instance.class, payload);
 
+        log.info("Create Request {}", instance);
+
         switch (instance.getSwordfishCommand()) {
             case "start": {
                 ec2Start.start(instance.getInstanceId());
