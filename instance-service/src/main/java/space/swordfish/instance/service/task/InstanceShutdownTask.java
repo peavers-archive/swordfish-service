@@ -16,21 +16,18 @@ import javax.annotation.PostConstruct;
 @Component
 public class InstanceShutdownTask {
 
-    private final EC2Stop ec2Stop;
-    private final CronTrigger cronTrigger;
-    private final InstanceRepository instanceRepository;
-    private final ThreadPoolTaskScheduler taskScheduler;
+    @Autowired
+    private EC2Stop ec2Stop;
 
     @Autowired
-    public InstanceShutdownTask(
-            @Qualifier("threadPoolTaskScheduler") ThreadPoolTaskScheduler taskScheduler,
-            CronTrigger cronTrigger, InstanceRepository instanceRepository,
-            EC2Stop ec2Stop) {
-        this.taskScheduler = taskScheduler;
-        this.cronTrigger = cronTrigger;
-        this.instanceRepository = instanceRepository;
-        this.ec2Stop = ec2Stop;
-    }
+    private CronTrigger cronTrigger;
+
+    @Autowired
+    private InstanceRepository instanceRepository;
+
+    @Autowired
+    @Qualifier("threadPoolTaskScheduler")
+    private ThreadPoolTaskScheduler taskScheduler;
 
     @PostConstruct
     public void scheduleRunnableWithCronTrigger() {

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +36,7 @@ public class Auth0CommandGatewayRestController {
         Map<String, Object> data = new HashMap<>();
         data.put("picture", Objects.requireNonNull(user).getPicture());
 
-        pushToAuth0(data);
+        auth0Service.setUserMetaData(authenticationService.getCurrentAuth0User().getId(), data);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -47,18 +46,26 @@ public class Auth0CommandGatewayRestController {
         User user = readUserPayload(payload);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("gitlab_username", Objects.requireNonNull(user).getGitlabUsername());
-        data.put("gitlab_password", encryptPassword(user.getGitlabPassword()));
+        data.put("gitlab_username", user.getGitlabUsername());
+        data.put("gitlab_password", user.getGitlabPassword());
 
-        pushToAuth0(data);
+        auth0Service.setEncryptedUserMetaData(authenticationService.getCurrentAuth0User().getId(), data);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private void pushToAuth0(Map<String, Object> data) {
-        com.auth0.json.mgmt.users.User auth0User = new com.auth0.json.mgmt.users.User(null);
-        auth0User.setUserMetadata(data);
-        auth0Service.updateUser(auth0Service.getUserId(authenticationService.getCurrentToken()), auth0User);
+    @PostMapping("/users/aws")
+    public ResponseEntity<String> aws(@RequestBody String payload) {
+        User user = readUserPayload(payload);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("aws_key", user.getAwsKey());
+        data.put("aws_secret", user.getAwsSecret());
+        data.put("aws_region", user.getAwsRegion());
+
+        auth0Service.setEncryptedUserMetaData(authenticationService.getCurrentAuth0User().getId(), data);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private User readUserPayload(String payload) {
@@ -70,11 +77,6 @@ public class Auth0CommandGatewayRestController {
             log.error("Failed updating picture {}", e.getLocalizedMessage());
         }
         return null;
-    }
-
-    private String encryptPassword(String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.encode(password);
     }
 
 }

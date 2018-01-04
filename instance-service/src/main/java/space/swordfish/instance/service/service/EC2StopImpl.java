@@ -1,7 +1,6 @@
 package space.swordfish.instance.service.service;
 
 import com.amazonaws.handlers.AsyncHandler;
-import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
@@ -20,14 +19,14 @@ public class EC2StopImpl implements EC2Stop {
     private InstanceRepository instanceRepository;
 
     @Autowired
-    private AmazonEC2Async amazonEC2Async;
+    private EC2UserClient ec2UserClient;
 
     @Autowired
     private EC2Sync ec2Sync;
 
     @Override
     public void stop(String instanceId) {
-        amazonEC2Async.stopInstancesAsync(
+        ec2UserClient.amazonEC2Async().stopInstancesAsync(
                 new StopInstancesRequest().withInstanceIds(instanceId),
                 new AsyncHandler<StopInstancesRequest, StopInstancesResult>() {
                     @Override
@@ -41,15 +40,6 @@ public class EC2StopImpl implements EC2Stop {
                                           StopInstancesResult result) {
                         List<InstanceStateChange> instanceStateChanges = result
                                 .getStoppingInstances();
-
-                        for (InstanceStateChange stateChange : instanceStateChanges) {
-
-                            ec2Sync.syncStateChange(stateChange);
-
-                            amazonEC2Async.waiters().instanceStopped().runAsync(
-                                    ec2Sync.describeInstancesRequestWaiterParameters(instanceRepository.findByInstanceId(stateChange.getInstanceId())),
-                                    ec2Sync.describeInstancesRequestWaiterHandler());
-                        }
                     }
                 });
     }
