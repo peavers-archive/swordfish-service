@@ -25,9 +25,9 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
         // Every key name must be unique, so we use this to build the seed of the ID
         instance.setId(createUniqueId(keyName));
 
+        instance.setUserId(auth0Service.getUserIdFromToken(userToken));
         instance.setKeyName(keyName);
         instance.setKeyBlob(ec2KeyPair.create(instance));
-        instance.setUserId(auth0Service.getUserIdFromToken(userToken));
 
         instanceRepository.save(instance);
 
