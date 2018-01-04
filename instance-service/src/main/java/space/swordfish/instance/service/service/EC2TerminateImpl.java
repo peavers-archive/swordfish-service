@@ -1,7 +1,6 @@
 package space.swordfish.instance.service.service;
 
 import com.amazonaws.handlers.AsyncHandler;
-import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ public class EC2TerminateImpl implements EC2Terminate {
     private InstanceRepository instanceRepository;
 
     @Autowired
-    private AmazonEC2Async amazonEC2Async;
+    private EC2UserClient ec2UserClient;
 
     @Autowired
     private EC2KeyPair keyPair;
@@ -31,7 +30,7 @@ public class EC2TerminateImpl implements EC2Terminate {
             keyPair.delete(instance);
         }
 
-        amazonEC2Async.terminateInstancesAsync(
+        ec2UserClient.amazonEC2Async().terminateInstancesAsync(
                 new TerminateInstancesRequest().withInstanceIds(instanceId),
                 new AsyncHandler<TerminateInstancesRequest, TerminateInstancesResult>() {
                     @Override

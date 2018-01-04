@@ -1,7 +1,6 @@
 package space.swordfish.instance.service.service;
 
 import com.amazonaws.handlers.AsyncHandler;
-import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
 import com.amazonaws.services.ec2.model.StartInstancesResult;
@@ -20,14 +19,14 @@ public class EC2StartImpl implements EC2Start {
     private InstanceRepository instanceRepository;
 
     @Autowired
-    private AmazonEC2Async amazonEC2Async;
+    private EC2UserClient ec2UserClient;
 
     @Autowired
     private EC2Sync ec2Sync;
 
     @Override
     public void start(String instanceId) {
-        amazonEC2Async.startInstancesAsync(
+        ec2UserClient.amazonEC2Async().startInstancesAsync(
                 new StartInstancesRequest().withInstanceIds(instanceId),
                 new AsyncHandler<StartInstancesRequest, StartInstancesResult>() {
                     @Override
@@ -43,11 +42,7 @@ public class EC2StartImpl implements EC2Start {
                                 .getStartingInstances();
 
                         for (InstanceStateChange stateChange : instanceStateChanges) {
-                            ec2Sync.syncStateChange(stateChange);
 
-                            amazonEC2Async.waiters().instanceRunning().runAsync(
-                                    ec2Sync.describeInstancesRequestWaiterParameters(instanceRepository.findByInstanceId(stateChange.getInstanceId())),
-                                    ec2Sync.describeInstancesRequestWaiterHandler());
                         }
                     }
                 });

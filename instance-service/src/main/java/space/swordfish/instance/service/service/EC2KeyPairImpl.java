@@ -1,6 +1,5 @@
 package space.swordfish.instance.service.service;
 
-import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.CreateKeyPairRequest;
 import com.amazonaws.services.ec2.model.CreateKeyPairResult;
 import com.amazonaws.services.ec2.model.DeleteKeyPairRequest;
@@ -15,13 +14,13 @@ import java.time.Instant;
 public class EC2KeyPairImpl implements EC2KeyPair {
 
     @Autowired
-    private AmazonEC2Async amazonEC2Async;
+    private EC2UserClient ec2UserClient;
 
     @Override
     public String create(Instance instance) {
         CreateKeyPairRequest createKeyPairRequest = new CreateKeyPairRequest();
         createKeyPairRequest.withKeyName(instance.getKeyName());
-        CreateKeyPairResult createKeyPairResult = amazonEC2Async.createKeyPair(createKeyPairRequest);
+        CreateKeyPairResult createKeyPairResult = ec2UserClient.amazonEC2Async(instance.getUserToken()).createKeyPair(createKeyPairRequest);
 
         KeyPair keyPair = createKeyPairResult.getKeyPair();
 
@@ -38,6 +37,6 @@ public class EC2KeyPairImpl implements EC2KeyPair {
         DeleteKeyPairRequest deleteKeyPairRequest = new DeleteKeyPairRequest();
         deleteKeyPairRequest.withKeyName(instance.getKeyName());
 
-        amazonEC2Async.deleteKeyPair(deleteKeyPairRequest);
+        ec2UserClient.amazonEC2Async(instance.getUserToken()).deleteKeyPair(deleteKeyPairRequest);
     }
 }

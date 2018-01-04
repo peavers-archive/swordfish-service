@@ -9,11 +9,13 @@ public interface InstanceRepository extends CrudRepository<Instance, String> {
 
     Instance findByInstanceId(String instanceId);
 
+    Instance findByKeyName(String keyName);
+
+    Instance findById(String id);
+
     Iterable<Instance> findAllByStateAndProduction(String state, boolean production);
 
     Iterable<Instance> findAllByStateAndSwordfishIsTrueAndProductionIsFalse(String state);
-
-    Instance findById(String id);
 
     void deleteByInstanceId(String instanceId);
 

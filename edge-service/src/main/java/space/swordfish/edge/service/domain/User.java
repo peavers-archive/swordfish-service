@@ -17,4 +17,7 @@ public class User {
     String gitlabUsername;
     String gitlabPassword;
 
+    String awsKey;
+    String awsSecret;
+    String awsRegion;
 }

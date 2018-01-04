@@ -42,7 +42,7 @@ public class InstanceCommandGatewayRestController {
             ObjectMapper objectMapper = new ObjectMapper();
             Instance instance = objectMapper.readValue(result, Instance.class);
 
-            instance.setUserToken(authenticationService.getCurrentToken());
+            instance.setUserToken(authenticationService.getCurrentAuth0Token());
             payload = jsonTransformService.write(instance);
 
             this.queueMessagingTemplate.send(queue,
