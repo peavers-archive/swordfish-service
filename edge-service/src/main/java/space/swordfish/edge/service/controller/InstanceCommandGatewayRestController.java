@@ -1,8 +1,6 @@
 package space.swordfish.edge.service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +15,6 @@ import space.swordfish.edge.service.domain.Instance;
 
 import java.io.IOException;
 
-@Api(tags = "Instances Command")
 @Slf4j
 @RestController
 public class InstanceCommandGatewayRestController {
@@ -34,7 +31,6 @@ public class InstanceCommandGatewayRestController {
     @Value("${queues.instanceEvents}")
     private String queue;
 
-    @ApiOperation(value = "Issue a command against a instance.")
     @RequestMapping(value = "/instances", method = RequestMethod.POST)
     public ResponseEntity<String> post(@RequestBody String payload) {
         try {
@@ -54,7 +50,6 @@ public class InstanceCommandGatewayRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @ApiOperation(value = "Issue a command against a instance.")
     @RequestMapping(value = "/instances/{id}", method = {RequestMethod.PATCH, RequestMethod.DELETE})
     public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
         this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(payload).build());

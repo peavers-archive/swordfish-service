@@ -1,7 +1,5 @@
 package space.swordfish.edge.service.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -15,7 +13,6 @@ import space.swordfish.common.auth.services.AuthenticationService;
 import space.swordfish.common.json.services.JsonTransformService;
 
 @Slf4j
-@Api(tags = "Instances Query")
 @RestController
 public class SecurityGroupGatewayRestController {
 
@@ -31,7 +28,6 @@ public class SecurityGroupGatewayRestController {
     @Autowired
     private JsonTransformService jsonTransformService;
 
-    @ApiOperation(value = "List all security groups.")
     @GetMapping("/security-groups")
     public ResponseEntity<String> securityGroups() {
         ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {

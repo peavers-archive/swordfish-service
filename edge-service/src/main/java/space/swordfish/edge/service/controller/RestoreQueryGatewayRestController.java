@@ -1,7 +1,5 @@
 package space.swordfish.edge.service.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import space.swordfish.common.auth.services.AuthenticationService;
 
-@Api(tags = "Restore Query")
 @RestController
 public class RestoreQueryGatewayRestController {
 
@@ -24,7 +21,6 @@ public class RestoreQueryGatewayRestController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @ApiOperation(value = "Returns a list of deployments associated to the environment.")
     @GetMapping("/restore/deployments/{projectId}/{environmentId}")
     public ResponseEntity<String> listAllDeployments(@PathVariable String projectId,
                                                      @PathVariable String environmentId) {
@@ -35,7 +31,6 @@ public class RestoreQueryGatewayRestController {
                 HttpMethod.GET, null, reference, projectId, environmentId);
     }
 
-    @ApiOperation(value = "Obtain information about a deployment.")
     @GetMapping("/restore/deployments/{projectId}/{environmentId}/{deploymentId}")
     public ResponseEntity<String> viewDeployments(@PathVariable String projectId,
                                                   @PathVariable String environmentId, @PathVariable String deploymentId) {
@@ -47,7 +42,6 @@ public class RestoreQueryGatewayRestController {
                 HttpMethod.GET, null, reference, projectId, environmentId, deploymentId);
     }
 
-    @ApiOperation(value = "Return a list of all stacks that you have the authority to view, with relevant datapoints.")
     @GetMapping("/stacks")
     public ResponseEntity<String> listAllStacks() {
         ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
@@ -66,7 +60,6 @@ public class RestoreQueryGatewayRestController {
                 authenticationService.addAuthenticationHeader(), reference, projectId);
     }
 
-    @ApiOperation(value = "View information about a specific stack.")
     @GetMapping("/restore/stacks/{projectId}")
     public ResponseEntity<String> viewStacks(@PathVariable String projectId) {
         ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
@@ -76,7 +69,6 @@ public class RestoreQueryGatewayRestController {
                 null, reference, projectId);
     }
 
-    @ApiOperation(value = "Returns a list of snapshots associated with a stack. ")
     @GetMapping("/restore/snapshots/{projectId}")
     public ResponseEntity<String> listAllSnapshots(@PathVariable String projectId) {
         ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
@@ -86,7 +78,6 @@ public class RestoreQueryGatewayRestController {
                 null, reference, projectId);
     }
 
-    @ApiOperation(value = "Obtain information about a snapshot.")
     @GetMapping("/restore/snapshots/{projectId}/{snapshotId}")
     public ResponseEntity<String> viewSnapshots(@PathVariable String projectId,
                                                 @PathVariable String snapshotId) {
@@ -97,7 +88,6 @@ public class RestoreQueryGatewayRestController {
                 HttpMethod.GET, null, reference, projectId, snapshotId);
     }
 
-    @ApiOperation(value = "Obtain information about a transfer.")
     @GetMapping("/restore/snapshots/transfer/{projectId}/{transferId}")
     public ResponseEntity<String> transferSnapshots(@PathVariable String projectId,
                                                     @PathVariable String transferId) {
@@ -109,7 +99,6 @@ public class RestoreQueryGatewayRestController {
                 null, reference, projectId, transferId);
     }
 
-    @ApiOperation(value = "View status of the code fetch.")
     @GetMapping("/restore/git/{projectId}/{fetchId}")
     public ResponseEntity<String> viewFetch(@PathVariable("projectId") String projectId,
                                             @PathVariable("fetchId") String fetchId) {
