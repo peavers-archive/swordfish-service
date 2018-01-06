@@ -1,67 +1,68 @@
 package space.swordfish.instance.service.listener;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.instance.service.domain.Instance;
-import space.swordfish.instance.service.service.*;
 
-@Slf4j
 @Service
 @EnableSqs
 public class QueueListener {
 
-    @Autowired
-    private EC2Create ec2Create;
-
-    @Autowired
-    private EC2Stop ec2Stop;
-
-    @Autowired
-    private EC2Start ec2Start;
-
-    @Autowired
-    private EC2Terminate ec2Terminate;
-
-    @Autowired
-    private EC2Reboot ec2Reboot;
+    private final static String SERVICE = "http://instance-service/instances";
 
     @Autowired
     private JsonTransformService jsonTransformService;
 
-    /**
-     * Reads events from InstanceQueue and determines what to do with them.
-     *
-     * @param payload String representation of a InstanceEvent
-     */
+    @Autowired
+    private RestTemplate restTemplate;
+
     @MessageMapping("${queues.instanceEvents}")
     public void instanceCommandHandler(String payload) {
+
+        // Transform the payload to the object so we can get the preset JWT
         Instance instance = jsonTransformService.read(Instance.class, payload);
 
+        // Load the JWT into the internal request header
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + instance.getUserToken());
+        HttpEntity<String> instanceEntity = new HttpEntity<>(payload, headers);
+
+        // Decide and set where to fire the request to
+        String endpoint;
         switch (instance.getSwordfishCommand()) {
             case "start": {
-                ec2Start.process(instance);
+                endpoint = "/start";
                 break;
             }
             case "stop": {
-                ec2Stop.process(instance);
+                endpoint = "/stop";
                 break;
             }
             case "create": {
-                ec2Create.process(instance);
+                endpoint = "/create";
                 break;
             }
             case "reboot": {
-                ec2Reboot.process(instance);
+                endpoint = "/reboot";
                 break;
             }
             case "terminate": {
-                ec2Terminate.process(instance);
+                endpoint = "/terminate";
                 break;
             }
+            default: {
+                endpoint = "/error";
+            }
         }
+
+        // Fire the initial string payload through to the correct controller endpoint
+        restTemplate.exchange(SERVICE + endpoint, HttpMethod.POST, instanceEntity, String.class);
     }
 }

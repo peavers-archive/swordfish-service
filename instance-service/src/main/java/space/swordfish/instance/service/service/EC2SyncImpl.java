@@ -44,7 +44,7 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
     @Override
     public Instance getByInstance(Instance instance) {
         DescribeInstancesRequest request = new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId());
-        DescribeInstancesResult response = ec2UserClient.amazonEC2Async(instance.getUserId()).describeInstances(request);
+        DescribeInstancesResult response = ec2UserClient.amazonEC2Async().describeInstances(request);
 
         return getInstanceDetails(response.getReservations().get(0).getInstances().get(0));
     }

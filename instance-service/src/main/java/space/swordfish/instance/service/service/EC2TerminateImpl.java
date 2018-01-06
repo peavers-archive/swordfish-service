@@ -21,7 +21,7 @@ public class EC2TerminateImpl extends EC2BaseService implements EC2Terminate {
             ec2KeyPair.delete(instance);
         }
 
-        ec2UserClient.amazonEC2Async(instance.getUserId()).terminateInstancesAsync(
+        ec2UserClient.amazonEC2Async().terminateInstancesAsync(
                 new TerminateInstancesRequest().withInstanceIds(instance.getInstanceId()),
                 new AsyncHandler<TerminateInstancesRequest, TerminateInstancesResult>() {
                     @Override

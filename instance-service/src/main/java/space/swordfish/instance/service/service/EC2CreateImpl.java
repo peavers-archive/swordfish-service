@@ -43,7 +43,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
                 .withSubnetId(instance.getSubnetId())
                 .withTagSpecifications(buildTags(instance));
 
-        ec2UserClient.amazonEC2Async(instance.getUserId()).runInstancesAsync(runInstancesRequest,
+        ec2UserClient.amazonEC2Async().runInstancesAsync(runInstancesRequest,
                 new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
                     @Override
                     public void onError(Exception exception) {

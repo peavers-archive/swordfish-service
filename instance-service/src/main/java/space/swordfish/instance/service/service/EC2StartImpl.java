@@ -17,7 +17,7 @@ public class EC2StartImpl extends EC2BaseService implements EC2Start {
 
     @Override
     public void process(Instance instance) {
-        ec2UserClient.amazonEC2Async(instance.getUserId()).startInstancesAsync(
+        ec2UserClient.amazonEC2Async().startInstancesAsync(
                 new StartInstancesRequest().withInstanceIds(instance.getInstanceId()),
                 new AsyncHandler<StartInstancesRequest, StartInstancesResult>() {
                     @Override

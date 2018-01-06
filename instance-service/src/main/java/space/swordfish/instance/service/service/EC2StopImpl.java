@@ -17,7 +17,7 @@ public class EC2StopImpl extends EC2BaseService implements EC2Stop {
 
     @Override
     public void process(Instance instance) {
-        ec2UserClient.amazonEC2Async(instance.getUserId()).stopInstancesAsync(
+        ec2UserClient.amazonEC2Async().stopInstancesAsync(
                 new StopInstancesRequest().withInstanceIds(instance.getInstanceId()),
                 new AsyncHandler<StopInstancesRequest, StopInstancesResult>() {
                     @Override

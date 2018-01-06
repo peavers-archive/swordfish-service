@@ -19,9 +19,13 @@ public class EC2UserClientImpl extends EC2BaseService implements EC2UserClient {
         }
 
         String userId = auth0Service.getUserIdFromToken(authenticationService.getCurrentAuth0Token());
-        String accessKey = auth0Service.getEncryptedUserMetaByKey(userId, "aws_key");
-        String secretKey = auth0Service.getEncryptedUserMetaByKey(userId, "aws_secret");
-        String region = auth0Service.getEncryptedUserMetaByKey(userId, "aws_region");
+        String accessKey = auth0Service.getUserMetaByKey(userId, "aws_key");
+        String secretKey = auth0Service.getUserMetaByKey(userId, "aws_secret");
+        String region = auth0Service.getUserMetaByKey(userId, "aws_region");
+
+        if (secretKey == null || accessKey == null || region == null) {
+            return null;
+        }
 
         // Because Auth0 replaces '+' chars with spaces, this puts it back in
         secretKey = secretKey.replaceAll(" ", "+");
@@ -34,20 +38,4 @@ public class EC2UserClientImpl extends EC2BaseService implements EC2UserClient {
                 .build();
     }
 
-    @Override
-    public AmazonEC2Async amazonEC2Async(String userId) {
-        String accessKey = auth0Service.getEncryptedUserMetaByKey(userId, "aws_key");
-        String secretKey = auth0Service.getEncryptedUserMetaByKey(userId, "aws_secret");
-        String region = auth0Service.getEncryptedUserMetaByKey(userId, "aws_region");
-
-        // Because Auth0 replaces '+' chars with spaces, this puts it back in
-        secretKey = secretKey.replaceAll(" ", "+");
-
-        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(
-                accessKey, secretKey);
-
-        return AmazonEC2AsyncClientBuilder.standard().withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
-                .build();
-    }
 }

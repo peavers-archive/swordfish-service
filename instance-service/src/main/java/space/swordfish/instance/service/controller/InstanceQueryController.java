@@ -13,7 +13,7 @@ import space.swordfish.instance.service.service.EC2Sync;
 @Slf4j
 @RestController
 @RequestMapping("/instances")
-public class InstanceController {
+public class InstanceQueryController {
 
     @Autowired
     private EC2Sync ec2Sync;
