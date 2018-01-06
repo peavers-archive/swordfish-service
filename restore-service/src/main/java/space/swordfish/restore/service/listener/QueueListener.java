@@ -3,55 +3,35 @@ package space.swordfish.restore.service.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import space.swordfish.common.json.services.JsonTransformService;
-import space.swordfish.common.queue.services.QueueMessageService;
 import space.swordfish.restore.service.domain.StackEvent;
-import space.swordfish.restore.service.service.SilverstripeService;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Service
 @EnableSqs
 public class QueueListener {
 
-    @Autowired
-    private SilverstripeService silverstripeService;
+    private final static String SERVICE = "http://restore-service";
 
     @Autowired
     private JsonTransformService jsonTransformService;
 
     @Autowired
-    private QueueMessageService queueMessageService;
+    private RestTemplate restTemplate;
 
-    /**
-     * Reads events from InstanceQueue and determines what to do with them.
-     *
-     * @param payload String representation of a InstanceEvent
-     */
     @MessageMapping("${queues.restoreEvents}")
-    public void instanceCommandHandler(String payload) {
+    public void restoreCommandHandler(String payload) {
         StackEvent stackEvent = jsonTransformService.read(StackEvent.class, payload);
-        Future<String> snapshot = silverstripeService
-                .createSnapshot(stackEvent.getProjectId(), stackEvent);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + stackEvent.getUserToken());
+        HttpEntity<String> stackEntity = new HttpEntity<>(payload, headers);
 
-        log.info("StackEvent {}", stackEvent);
-
-        while (!snapshot.isDone()) {
-            try {
-                String message = snapshot.get(3000, TimeUnit.SECONDS);
-
-                log.info("Message {}", message);
-
-                queueMessageService.send(stackEvent.getInstanceId(), message);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                log.warn("timeout error {}", e.getLocalizedMessage());
-            }
-        }
+        restTemplate.exchange(SERVICE + "/stacks/create", HttpMethod.POST, stackEntity, String.class);
     }
 }

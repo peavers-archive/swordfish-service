@@ -29,7 +29,7 @@ public class InstanceQueryController {
         return jsonTransformService.writeList(ec2Sync.getAll());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public String findById(@PathVariable String id) {
         return jsonTransformService.write(instanceRepository.findByInstanceId(id));
     }

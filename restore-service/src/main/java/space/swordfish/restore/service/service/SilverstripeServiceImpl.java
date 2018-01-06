@@ -70,7 +70,7 @@ public class SilverstripeServiceImpl implements SilverstripeService {
             return setStackIdOnSnapshot(completeTransferData.getBody().toString(), projectId);
         };
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ExecutorService executor = Executors.newFixedThreadPool(10);
 
         return executor.submit(task);
     }

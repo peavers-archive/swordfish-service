@@ -6,30 +6,27 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import space.swordfish.restore.service.service.AuthenticatedRestTemplate;
 
 @Service
 public class SilverstripeLockImpl implements SilverstripeLock {
 
-    private final RestTemplate restTemplate;
     @Value("${silverstripe.dashHost}")
     private String HOST;
 
     @Autowired
-    public SilverstripeLockImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private AuthenticatedRestTemplate authenticatedRestTemplate;
 
     @Override
     public ResponseEntity<JsonNode> lock(String projectId, String environmentId) {
-        return restTemplate.exchange(
+        return authenticatedRestTemplate.restTemplate().exchange(
                 HOST + "/{projectId}/environment/{environmentId}/lock", HttpMethod.POST,
                 null, JsonNode.class, projectId, environmentId);
     }
 
     @Override
     public ResponseEntity<JsonNode> unlock(String projectId, String environmentId) {
-        return restTemplate.exchange(
+        return authenticatedRestTemplate.restTemplate().exchange(
                 HOST + "/{projectId}/environment/{environmentId}/lock", HttpMethod.DELETE,
                 null, JsonNode.class, projectId, environmentId);
     }

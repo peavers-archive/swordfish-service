@@ -1,16 +1,20 @@
 package space.swordfish.restore.service.configuration;
 
 import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
-@Order(1)
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value(value = "${auth0.audience}")
@@ -19,12 +23,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value(value = "${auth0.issuer}")
     private String issuer;
 
+    public SecurityConfig() {
+        super();
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests().antMatchers("/actuator/health").permitAll()
-                .antMatchers("/health").permitAll();
-
-        JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity).csrf()
-                .disable().authorizeRequests().anyRequest().authenticated();
+        JwtWebSecurityConfigurer.forRS256(audience, issuer)
+                .configure(httpSecurity)
+                .authorizeRequests()
+                .antMatchers("/health").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/stacks/create").authenticated();
     }
 }

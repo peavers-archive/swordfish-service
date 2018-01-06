@@ -7,24 +7,21 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import space.swordfish.restore.service.domain.DeploymentEvent;
+import space.swordfish.restore.service.service.AuthenticatedRestTemplate;
 
 @Service
 public class SilverstripeDeploymentImpl implements SilverstripeDeployment {
 
-    private final RestTemplate restTemplate;
     @Value("${silverstripe.dashHost}")
     private String HOST;
 
     @Autowired
-    public SilverstripeDeploymentImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private AuthenticatedRestTemplate authenticatedRestTemplate;
 
     @Override
     public ResponseEntity<JsonNode> listAll(String projectId, String environmentId) {
-        return restTemplate.exchange(
+        return authenticatedRestTemplate.restTemplate().exchange(
                 HOST + "/{projectId}/environment/{environmentId}/deploys", HttpMethod.GET,
                 null, JsonNode.class, projectId, environmentId);
     }
@@ -32,7 +29,7 @@ public class SilverstripeDeploymentImpl implements SilverstripeDeployment {
     @Override
     public ResponseEntity<JsonNode> create(String projectId, String environmentId,
                                            DeploymentEvent deploymentEvent) {
-        return restTemplate.exchange(
+        return authenticatedRestTemplate.restTemplate().exchange(
                 HOST + "/{projectId}/environment/{environmentId}/deploys",
                 HttpMethod.POST, new HttpEntity<>(deploymentEvent), JsonNode.class,
                 projectId, environmentId);
@@ -41,7 +38,7 @@ public class SilverstripeDeploymentImpl implements SilverstripeDeployment {
     @Override
     public ResponseEntity<JsonNode> view(String projectId, String environmentId,
                                          String deploymentId) {
-        return restTemplate.exchange(
+        return authenticatedRestTemplate.restTemplate().exchange(
                 HOST + "/{projectId}/environment/{environmentId}/deploys/{deploymentId}",
                 HttpMethod.GET, null, JsonNode.class, projectId, environmentId,
                 deploymentId);
@@ -50,7 +47,7 @@ public class SilverstripeDeploymentImpl implements SilverstripeDeployment {
     @Override
     public ResponseEntity<JsonNode> delete(String projectId, String environmentId,
                                            String deploymentId) {
-        return restTemplate.exchange(
+        return authenticatedRestTemplate.restTemplate().exchange(
                 HOST + "/{projectId}/environment/{environmentId}/deploys/{deploymentId}",
                 HttpMethod.DELETE, null, JsonNode.class, projectId, environmentId,
                 deploymentId);

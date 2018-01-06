@@ -21,4 +21,6 @@ public class StackEvent {
     String projectId;
     String environment;
     String mode;
+
+    String userToken;
 }

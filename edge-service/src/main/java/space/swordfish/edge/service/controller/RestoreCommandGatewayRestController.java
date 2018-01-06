@@ -12,6 +12,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import space.swordfish.common.auth.services.AuthenticationService;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.edge.service.domain.StackEvent;
 
@@ -22,7 +23,11 @@ import java.io.IOException;
 public class RestoreCommandGatewayRestController {
 
     private final QueueMessagingTemplate queueMessagingTemplate;
+
     private final JsonTransformService jsonTransformService;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Value("${queues.restoreEvents}")
     private String queue;
@@ -44,6 +49,7 @@ public class RestoreCommandGatewayRestController {
             ObjectMapper objectMapper = new ObjectMapper();
 
             StackEvent stackEvent = objectMapper.readValue(result, StackEvent.class);
+            stackEvent.setUserToken(authenticationService.getCurrentAuth0Token());
 
             payload = jsonTransformService.write(stackEvent);
 

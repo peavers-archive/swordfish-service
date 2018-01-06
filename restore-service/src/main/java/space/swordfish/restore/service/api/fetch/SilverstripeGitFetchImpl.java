@@ -6,29 +6,27 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import space.swordfish.restore.service.service.AuthenticatedRestTemplate;
 
 @Service
 public class SilverstripeGitFetchImpl implements SilverstripeGitFetch {
 
-    private final RestTemplate restTemplate;
     @Value("${silverstripe.dashHost}")
     private String HOST;
 
     @Autowired
-    public SilverstripeGitFetchImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private AuthenticatedRestTemplate authenticatedRestTemplate;
+
 
     @Override
     public ResponseEntity<JsonNode> create(String projectId) {
-        return restTemplate.exchange(HOST + "/{projectId}/git/fetches", HttpMethod.POST,
+        return authenticatedRestTemplate.restTemplate().exchange(HOST + "/{projectId}/git/fetches", HttpMethod.POST,
                 null, JsonNode.class, projectId);
     }
 
     @Override
     public ResponseEntity<JsonNode> view(String projectId, String fetchId) {
-        return restTemplate.exchange(HOST + "/{projectId}/git/fetches/{fetchId}",
+        return authenticatedRestTemplate.restTemplate().exchange(HOST + "/{projectId}/git/fetches/{fetchId}",
                 HttpMethod.GET, null, JsonNode.class, projectId, fetchId);
     }
 }
