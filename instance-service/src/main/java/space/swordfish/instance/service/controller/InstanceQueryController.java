@@ -16,21 +16,26 @@ import space.swordfish.instance.service.service.EC2Sync;
 public class InstanceQueryController {
 
     @Autowired
-    private EC2Sync ec2Sync;
-
-    @Autowired
     private JsonTransformService jsonTransformService;
 
     @Autowired
     private InstanceRepository instanceRepository;
 
+    @Autowired
+    private EC2Sync ec2Sync;
+
+    @GetMapping("refresh-all")
+    public String refreshAll() {
+        return jsonTransformService.writeList(ec2Sync.syncAll());
+    }
+
     @GetMapping()
     public String findAll() {
-        return jsonTransformService.writeList(ec2Sync.getAll());
+        return jsonTransformService.writeList(instanceRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public String findById(@PathVariable String id) {
-        return jsonTransformService.write(instanceRepository.findByInstanceId(id));
+        return jsonTransformService.write(instanceRepository.findById(id));
     }
 }

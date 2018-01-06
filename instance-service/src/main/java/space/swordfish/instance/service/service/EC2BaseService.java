@@ -37,6 +37,6 @@ abstract class EC2BaseService {
     }
 
     void refreshClientInstance(Instance instance) {
-        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(ec2Sync.getByInstance(instance)));
+        notificationService.send("server_refresh", "server_refresh", jsonTransformService.write(instance));
     }
 }

@@ -55,6 +55,8 @@ public class Instance {
     String userName;
     String userPicture;
 
+    Date lastSync;
+
     @Relationship("securityGroups")
     List<SecurityGroup> securityGroups;
 

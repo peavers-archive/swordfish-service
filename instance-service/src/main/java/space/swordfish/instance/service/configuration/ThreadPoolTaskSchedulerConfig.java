@@ -3,7 +3,6 @@ package space.swordfish.instance.service.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.support.CronTrigger;
 
 @Configuration
 public class ThreadPoolTaskSchedulerConfig {
@@ -16,10 +15,4 @@ public class ThreadPoolTaskSchedulerConfig {
 
 		return threadPoolTaskScheduler;
 	}
-
-	@Bean
-	public CronTrigger cronTrigger() {
-		return new CronTrigger("00 00 18 * * ?");
-	}
-
 }

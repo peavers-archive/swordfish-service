@@ -1,5 +1,6 @@
 package space.swordfish.instance.service.service;
 
+import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Reservation;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import space.swordfish.instance.service.domain.Instance;
+import space.swordfish.instance.service.repository.InstanceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,47 +21,56 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
     @Autowired
     private EC2UserClient ec2UserClient;
 
+    @Autowired
+    private InstanceRepository instanceRepository;
+
     @Override
-    public Iterable<Instance> getAll() {
+    public Iterable<Instance> syncAll(AmazonEC2Async amazonEC2Async) {
+        DescribeInstancesRequest request = new DescribeInstancesRequest();
+        DescribeInstancesResult response = amazonEC2Async.describeInstances(request);
+
+        return processResponse(response);
+    }
+
+    @Override
+    public Iterable<Instance> syncAll() {
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         DescribeInstancesResult response = ec2UserClient.amazonEC2Async().describeInstances(request);
 
+        return processResponse(response);
+    }
+
+    @Override
+    public Instance syncByInstance(Instance instance) {
+        DescribeInstancesRequest request = new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId());
+        DescribeInstancesResult response = ec2UserClient.amazonEC2Async().describeInstances(request);
+
+        return processResponse(response).get(0);
+    }
+
+    private List<Instance> processResponse(DescribeInstancesResult response) {
         List<Instance> returnedInstances = new ArrayList<>();
 
         for (Reservation reservation : response.getReservations()) {
             for (com.amazonaws.services.ec2.model.Instance instance : reservation.getInstances()) {
 
-                Instance instanceDetails = getInstanceDetails(instance);
-
-                if (instanceDetails != null) {
-                    returnedInstances.add(instanceDetails);
+                // Don't show dead servers or servers not tagged as belonging to Swordfish
+                if (instance.getState().getName().equals("terminated") || !instance.getTags().contains(new Tag().withKey("Swordfish").withValue("true"))) {
+                    continue;
                 }
 
+                Instance instanceDetails = getInstanceDetails(instance);
+                returnedInstances.add(instanceDetails);
+                instanceRepository.save(instanceDetails);
             }
         }
 
         return returnedInstances;
     }
 
-    @Override
-    public Instance getByInstance(Instance instance) {
-        DescribeInstancesRequest request = new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId());
-        DescribeInstancesResult response = ec2UserClient.amazonEC2Async().describeInstances(request);
-
-        return getInstanceDetails(response.getReservations().get(0).getInstances().get(0));
-    }
-
     private Instance getInstanceDetails(com.amazonaws.services.ec2.model.Instance awsInstance) {
 
-        // Don't show dead servers
-        if (awsInstance.getState().getName().equals("terminated")) {
-            return null;
-        }
-
-        // Don't show servers that don't belong to swordfish
-        if (!awsInstance.getTags().contains(new Tag().withKey("Swordfish").withValue("true"))) {
-            return null;
-        }
+        log.info("New server found! {}", awsInstance);
 
         // If we've got extra data such as keys or names in the database grab em, otherwise create a new instance
         Instance instance = instanceRepository.findByKeyName(awsInstance.getKeyName());
@@ -99,6 +110,8 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
         instance.setPublicIp(awsInstance.getPublicIpAddress());
         instance.setPrivateIp(awsInstance.getPrivateIpAddress());
         instance.setCreated(awsInstance.getLaunchTime());
+
+        instanceRepository.save(instance);
 
         return instance;
     }

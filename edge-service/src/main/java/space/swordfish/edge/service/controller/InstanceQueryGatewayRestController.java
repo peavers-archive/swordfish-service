@@ -33,6 +33,14 @@ public class InstanceQueryGatewayRestController {
         return restTemplate.exchange(SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
     }
 
+    @GetMapping("/instances/refresh-all")
+    public ResponseEntity<String> refreshAll() {
+        ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
+        };
+
+        return restTemplate.exchange(SERVICE + "/refresh-all", HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
+    }
+
     @GetMapping("/instances/{id}")
     public ResponseEntity<String> viewInstanceById(@PathVariable String id) {
         ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {

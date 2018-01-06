@@ -1,6 +1,7 @@
 package space.swordfish.instance.service.service;
 
 import com.amazonaws.handlers.AsyncHandler;
+import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,24 @@ public class EC2StopImpl extends EC2BaseService implements EC2Stop {
     private EC2UserClient ec2UserClient;
 
     @Override
+    public void process(AmazonEC2Async amazonEC2Async, Instance instance) {
+        amazonEC2Async.stopInstancesAsync(
+                new StopInstancesRequest().withInstanceIds(instance.getInstanceId()),
+                new AsyncHandler<StopInstancesRequest, StopInstancesResult>() {
+                    @Override
+                    public void onError(Exception exception) {
+                        log.warn("something went wrong stopping the server {}",
+                                exception.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(StopInstancesRequest request, StopInstancesResult result) {
+                        refreshClientInstance(instance);
+                    }
+                });
+    }
+
+    @Override
     public void process(Instance instance) {
         ec2UserClient.amazonEC2Async().stopInstancesAsync(
                 new StopInstancesRequest().withInstanceIds(instance.getInstanceId()),
@@ -28,6 +47,7 @@ public class EC2StopImpl extends EC2BaseService implements EC2Stop {
 
                     @Override
                     public void onSuccess(StopInstancesRequest request, StopInstancesResult result) {
+                        refreshClientInstance(instance);
                     }
                 });
     }

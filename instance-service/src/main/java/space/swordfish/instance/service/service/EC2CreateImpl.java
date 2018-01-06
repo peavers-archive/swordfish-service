@@ -53,7 +53,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
 
                     @Override
                     public void onSuccess(RunInstancesRequest request, RunInstancesResult result) {
-
+                        refreshClientInstance(instance);
                     }
                 });
     }

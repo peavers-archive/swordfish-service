@@ -6,5 +6,4 @@ public interface EC2UserClient {
 
     AmazonEC2Async amazonEC2Async();
 
-//    AmazonEC2Async amazonEC2Async(String userId);
 }

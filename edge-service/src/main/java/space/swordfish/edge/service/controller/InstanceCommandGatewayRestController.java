@@ -1,6 +1,5 @@
 package space.swordfish.edge.service.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import space.swordfish.common.auth.services.AuthenticationService;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.edge.service.domain.Instance;
-
-import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -31,29 +28,23 @@ public class InstanceCommandGatewayRestController {
     @Value("${queues.instanceEvents}")
     private String queue;
 
-    @RequestMapping(value = "/instances", method = RequestMethod.POST)
+    @PostMapping("/instances")
     public ResponseEntity<String> post(@RequestBody String payload) {
-        try {
-            String result = java.net.URLDecoder.decode(payload, "UTF-8");
-            ObjectMapper objectMapper = new ObjectMapper();
-            Instance instance = objectMapper.readValue(result, Instance.class);
+        Instance instance = jsonTransformService.read(Instance.class, payload);
+        instance.setUserToken(authenticationService.getCurrentAuth0Token());
+        String write = jsonTransformService.write(instance);
 
-            instance.setUserToken(authenticationService.getCurrentAuth0Token());
-            payload = jsonTransformService.write(instance);
-
-            this.queueMessagingTemplate.send(queue,
-                    MessageBuilder.withPayload(payload).build());
-        } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
-        }
+        this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(write).build());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/instances/{id}", method = {RequestMethod.PATCH, RequestMethod.DELETE})
+    @PatchMapping("/instances/{id}")
+    @DeleteMapping("/instances/{id}")
     public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
-        this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(payload).build());
+        post(payload);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

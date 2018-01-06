@@ -49,7 +49,6 @@ public class Instance {
     String userName;
     String userPicture;
 
-
     @Relationship("securityGroups")
     List<SecurityGroup> securityGroups;
 

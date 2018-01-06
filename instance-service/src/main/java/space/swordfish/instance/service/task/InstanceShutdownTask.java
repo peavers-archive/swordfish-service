@@ -1,37 +1,28 @@
 package space.swordfish.instance.service.task;
 
+import com.amazonaws.services.ec2.AmazonEC2Async;
+import com.auth0.json.mgmt.users.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 import space.swordfish.instance.service.domain.Instance;
-import space.swordfish.instance.service.repository.InstanceRepository;
 import space.swordfish.instance.service.service.EC2Stop;
 
 import javax.annotation.PostConstruct;
 
 @Slf4j
 @Component
-public class InstanceShutdownTask {
+public class InstanceShutdownTask extends TaskBase {
 
     @Autowired
     private EC2Stop ec2Stop;
 
-    @Autowired
-    private CronTrigger cronTrigger;
-
-    @Autowired
-    private InstanceRepository instanceRepository;
-
-    @Autowired
-    @Qualifier("threadPoolTaskScheduler")
-    private ThreadPoolTaskScheduler taskScheduler;
-
     @PostConstruct
     public void scheduleRunnableWithCronTrigger() {
-        taskScheduler.schedule(new RunnableTask(), cronTrigger);
+        CronTrigger cronTrigger = new CronTrigger("00 00 18 * * ?");
+
+        taskScheduler.schedule(new InstanceShutdownTask.RunnableTask(), cronTrigger);
     }
 
     /**
@@ -41,14 +32,15 @@ public class InstanceShutdownTask {
 
         @Override
         public void run() {
-            Iterable<Instance> instances = instanceRepository
-                    .findAllByStateAndSwordfishIsTrueAndProductionIsFalse("running");
+            Iterable<Instance> instances = instanceRepository.findAllByStateAndSwordfishIsTrueAndProductionIsFalse("running");
 
             for (Instance instance : instances) {
-                log.info("automatically shutting down {}", instance.getTags());
+                User user = auth0Service.getUser(instance.getUserId());
+                AmazonEC2Async amazonEC2Async = customAmazonEC2Async(user);
 
-                ec2Stop.process(instance);
+                ec2Stop.process(amazonEC2Async, instance);
             }
+
         }
     }
 }
