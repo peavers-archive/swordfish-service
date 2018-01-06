@@ -13,11 +13,13 @@ public class User {
     @Id
     String id = UUID.randomUUID().toString();
 
-    String picture;
-    String gitlabUsername;
-    String gitlabPassword;
-
     String awsKey;
     String awsSecret;
     String awsRegion;
+
+    String silverstripeUsername;
+    String silverstripeToken;
+
+    String gitlabUsername;
+    String gitlabPassword;
 }

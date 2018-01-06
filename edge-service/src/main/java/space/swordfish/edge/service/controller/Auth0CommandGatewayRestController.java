@@ -14,7 +14,6 @@ import space.swordfish.edge.service.domain.User;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is experimental, will need to be moved to a user-service at some point.
@@ -29,44 +28,31 @@ public class Auth0CommandGatewayRestController {
     @Autowired
     private Auth0Service auth0Service;
 
-    @PostMapping("/users/picture")
-    public ResponseEntity<String> picture(@RequestBody String payload) {
+
+    @PostMapping("/users")
+    public ResponseEntity<String> users(@RequestBody String payload) {
         User user = readUserPayload(payload);
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("picture", Objects.requireNonNull(user).getPicture());
-
-        auth0Service.setUserMetaData(authenticationService.getCurrentAuth0User().getId(), data);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PostMapping("/users/gitlab")
-    public ResponseEntity<String> gitlab(@RequestBody String payload) {
-        User user = readUserPayload(payload);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("gitlab_username", user.getGitlabUsername());
-        data.put("gitlab_password", user.getGitlabPassword());
-
-        auth0Service.setEncryptedUserMetaData(authenticationService.getCurrentAuth0User().getId(), data);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PostMapping("/users/aws")
-    public ResponseEntity<String> aws(@RequestBody String payload) {
-        User user = readUserPayload(payload);
+        if (user == null) {
+            return null;
+        }
 
         Map<String, Object> data = new HashMap<>();
         data.put("aws_key", user.getAwsKey());
         data.put("aws_secret", user.getAwsSecret());
         data.put("aws_region", user.getAwsRegion());
 
-        auth0Service.setEncryptedUserMetaData(authenticationService.getCurrentAuth0User().getId(), data);
+        data.put("silverstripe_username", user.getSilverstripeUsername());
+        data.put("silverstripe_token", user.getSilverstripeToken());
+
+        data.put("gitlab_username", user.getGitlabUsername());
+        data.put("gitlab_password", user.getGitlabPassword());
+
+        auth0Service.setUserMetaData(authenticationService.getCurrentAuth0User().getId(), data);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 
     private User readUserPayload(String payload) {
         try {
