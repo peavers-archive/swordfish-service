@@ -6,6 +6,7 @@ import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import space.swordfish.instance.service.domain.Instance;
@@ -29,6 +30,7 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         DescribeInstancesResult response = amazonEC2Async.describeInstances(request);
 
+
         return processResponse(response);
     }
 
@@ -46,6 +48,28 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
         DescribeInstancesResult response = ec2UserClient.amazonEC2Async().describeInstances(request);
 
         return processResponse(response).get(0);
+    }
+
+    @Override
+    public List<String> instancesNotOnAmazon() {
+        DescribeInstancesRequest request = new DescribeInstancesRequest();
+        DescribeInstancesResult response = ec2UserClient.amazonEC2Async().describeInstances(request);
+
+        Iterable<Instance> localInstances = instanceRepository.findAll();
+        List<com.amazonaws.services.ec2.model.Instance> remoteInstances = response.getReservations().get(0).getInstances();
+
+        List<String> localInstanceIds = new ArrayList<>();
+        List<String> remoteInstanceIds = new ArrayList<>();
+
+        for (Instance instance : localInstances) {
+            localInstanceIds.add(instance.getInstanceId());
+        }
+
+        for (com.amazonaws.services.ec2.model.Instance instance : remoteInstances) {
+            remoteInstanceIds.add(instance.getInstanceId());
+        }
+
+        return (List<String>) ListUtils.removeAll(localInstanceIds, remoteInstanceIds);
     }
 
     private List<Instance> processResponse(DescribeInstancesResult response) {
@@ -69,9 +93,6 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
     }
 
     private Instance getInstanceDetails(com.amazonaws.services.ec2.model.Instance awsInstance) {
-
-        log.info("New server found! {}", awsInstance);
-
         // If we've got extra data such as keys or names in the database grab em, otherwise create a new instance
         Instance instance = instanceRepository.findByKeyName(awsInstance.getKeyName());
         if (instance == null) {
