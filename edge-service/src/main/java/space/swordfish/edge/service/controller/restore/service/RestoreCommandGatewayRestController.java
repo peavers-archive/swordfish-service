@@ -1,6 +1,5 @@
-package space.swordfish.edge.service.controller;
+package space.swordfish.edge.service.controller.restore.service;
 
-import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,25 +21,17 @@ import java.io.IOException;
 @RestController
 public class RestoreCommandGatewayRestController {
 
-    private final QueueMessagingTemplate queueMessagingTemplate;
+    @Autowired
+    private QueueMessagingTemplate queueMessagingTemplate;
 
-    private final JsonTransformService jsonTransformService;
+    @Autowired
+    private JsonTransformService jsonTransformService;
 
     @Autowired
     private AuthenticationService authenticationService;
 
     @Value("${queues.restoreEvents}")
     private String queue;
-
-    @Autowired
-    public RestoreCommandGatewayRestController(AmazonSQSAsync amazonSqs,
-                                               QueueMessagingTemplate queueMessagingTemplate,
-                                               JsonTransformService jsonTransformService) {
-        this.queueMessagingTemplate = queueMessagingTemplate;
-        this.jsonTransformService = jsonTransformService;
-
-        amazonSqs.createQueueAsync(queue);
-    }
 
     @PostMapping("/stack-events")
     public ResponseEntity<String> event(@RequestBody String payload) {

@@ -4,14 +4,13 @@ import com.github.jasminb.jsonapi.annotations.Id;
 import com.github.jasminb.jsonapi.annotations.Type;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Type("users")
 @Data
 public class User {
-
     @Id
-    String id = UUID.randomUUID().toString();
+    String id;
+    String auth0Id;
+    String requestToken;
 
     String awsKey;
     String awsSecret;
@@ -22,4 +21,6 @@ public class User {
 
     String gitlabUsername;
     String gitlabPassword;
+
+    String swordfishCommand;
 }
