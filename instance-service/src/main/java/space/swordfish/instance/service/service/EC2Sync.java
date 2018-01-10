@@ -3,6 +3,8 @@ package space.swordfish.instance.service.service;
 import com.amazonaws.services.ec2.AmazonEC2Async;
 import space.swordfish.instance.service.domain.Instance;
 
+import java.util.List;
+
 public interface EC2Sync {
 
     /**
@@ -27,4 +29,9 @@ public interface EC2Sync {
      * @return Instance data from AWS.
      */
     Instance syncByInstance(Instance instance);
+
+    /**
+     * Remove all instances that are local but not on AWS
+     */
+    List<String> instancesNotOnAmazon();
 }
