@@ -10,6 +10,7 @@ import space.swordfish.common.json.services.JsonTransformServiceImpl;
 import space.swordfish.common.notification.domain.Notification;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.domain.SecurityGroup;
+import space.swordfish.instance.service.domain.User;
 
 @Configuration
 public class JsonTransformConfig {
@@ -20,7 +21,7 @@ public class JsonTransformConfig {
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
 
         ResourceConverter resourceConverter = new ResourceConverter(objectMapper,
-                Instance.class, Notification.class, SecurityGroup.class);
+                Instance.class, Notification.class, SecurityGroup.class, User.class);
 
         return new JsonTransformServiceImpl(resourceConverter);
     }
@@ -30,6 +31,6 @@ public class JsonTransformConfig {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
 
-        return new ResourceConverter(objectMapper, Instance.class, Notification.class, SecurityGroup.class);
+        return new ResourceConverter(objectMapper, Instance.class, Notification.class, SecurityGroup.class, User.class);
     }
 }

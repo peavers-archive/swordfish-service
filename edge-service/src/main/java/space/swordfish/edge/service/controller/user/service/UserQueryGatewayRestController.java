@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import space.swordfish.common.auth.services.AuthenticationService;
 
 @Slf4j
 @RestController
 public class UserQueryGatewayRestController {
 
     private final static String SERVICE = "http://user-service/users";
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @LoadBalanced
     @Autowired
@@ -27,7 +31,7 @@ public class UserQueryGatewayRestController {
         ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
         };
 
-        return restTemplate.exchange(SERVICE, HttpMethod.GET, null, reference);
+        return restTemplate.exchange(SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
     }
 
     @GetMapping("/users/{id}")
@@ -35,7 +39,6 @@ public class UserQueryGatewayRestController {
         ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
         };
 
-        return restTemplate.exchange(SERVICE + "/{id}", HttpMethod.GET,
-                null, reference, id);
+        return restTemplate.exchange(SERVICE + "/{id}", HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference, id);
     }
 }
