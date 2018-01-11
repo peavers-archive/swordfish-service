@@ -68,3 +68,9 @@ after_success:
   - docker build -t $CONFIG ./restore-service
   - docker tag $CONFIG:$TAG $CONFIG:$TAG
   - docker push $CONFIG:$TAG
+
+  # USER SERVICE
+  - export CONFIG=$PROJECT/user-service
+  - docker build -t $CONFIG ./user-service
+  - docker tag $CONFIG:$TAG $CONFIG:$TAG
+  - docker push $CONFIG:$TAG
