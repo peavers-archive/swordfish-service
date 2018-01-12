@@ -26,7 +26,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
         instance.setId(createUniqueId(keyName));
 
         // We need the userId set here as just about everything else uses it
-        instance.setUserId(auth0Service.getUserIdFromToken(userToken));
+        instance.setUserId(authenticationService.getCurrentUser().getId());
 
         instance.setKeyName(keyName);
         instance.setKeyBlob(ec2KeyPair.create(instance));
@@ -59,12 +59,10 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
     }
 
     private TagSpecification buildTags(Instance instance) {
-        String userId = auth0Service.getUserIdFromToken(instance.getUserToken());
-
         List<Tag> tags = new ArrayList<>();
         tags.add(new Tag("Name", instance.getName()));
         tags.add(new Tag("Production", String.valueOf(instance.isProduction())));
-        tags.add(new Tag("UserId", userId));
+        tags.add(new Tag("UserId", authenticationService.getCurrentUser().getId()));
         tags.add(new Tag("Swordfish", "true"));
 
         TagSpecification tagSpecification = new TagSpecification();

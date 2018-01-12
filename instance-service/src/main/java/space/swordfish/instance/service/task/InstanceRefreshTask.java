@@ -1,13 +1,15 @@
 package space.swordfish.instance.service.task;
 
 import com.amazonaws.services.ec2.AmazonEC2Async;
-import com.auth0.json.mgmt.users.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
+import space.swordfish.common.auth.domain.User;
+import space.swordfish.common.auth.services.AuthenticationService;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.service.EC2Sync;
+import space.swordfish.instance.service.service.EC2UserClient;
 
 import javax.annotation.PostConstruct;
 
@@ -17,6 +19,12 @@ public class InstanceRefreshTask extends TaskBase {
 
     @Autowired
     private EC2Sync ec2Sync;
+
+    @Autowired
+    private EC2UserClient ec2UserClient;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @PostConstruct
     public void scheduleRunnableWithCronTrigger() {
@@ -32,10 +40,9 @@ public class InstanceRefreshTask extends TaskBase {
 
         @Override
         public void run() {
-            Iterable<User> allUsers = auth0Service.getAllUsers();
-            for (User user : allUsers) {
+            for (User user : authenticationService.getLocalUsers()) {
 
-                AmazonEC2Async amazonEC2Async = customAmazonEC2Async(user);
+                AmazonEC2Async amazonEC2Async = ec2UserClient.amazonEC2Async(user);
 
                 if (amazonEC2Async != null) {
                     Iterable<Instance> instances = ec2Sync.syncAll(amazonEC2Async);

@@ -36,8 +36,8 @@ public class UserQueryController {
 
         if (user == null) {
             user = new User();
-            com.auth0.json.mgmt.users.User currentAuth0User = authenticationService.getCurrentAuth0User();
-            user.setId(currentAuth0User.getId());
+            space.swordfish.common.auth.domain.User currentUser = authenticationService.getCurrentUser();
+            user.setId(currentUser.getId());
             userRepository.save(user);
         }
 

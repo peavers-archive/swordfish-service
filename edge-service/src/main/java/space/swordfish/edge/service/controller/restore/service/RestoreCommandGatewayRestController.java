@@ -40,7 +40,7 @@ public class RestoreCommandGatewayRestController {
             ObjectMapper objectMapper = new ObjectMapper();
 
             StackEvent stackEvent = objectMapper.readValue(result, StackEvent.class);
-            stackEvent.setUserToken(authenticationService.getCurrentAuth0Token());
+            stackEvent.setUserToken(authenticationService.getCurrentToken());
 
             payload = jsonTransformService.write(stackEvent);
 

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import space.swordfish.common.auth0.services.Auth0Service;
 import space.swordfish.instance.service.domain.Instance;
 import space.swordfish.instance.service.repository.InstanceRepository;
 
@@ -24,6 +25,9 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
 
     @Autowired
     private InstanceRepository instanceRepository;
+
+    @Autowired
+    private Auth0Service auth0Service;
 
     @Override
     public Iterable<Instance> syncAll(AmazonEC2Async amazonEC2Async) {

@@ -31,7 +31,7 @@ public class InstanceCommandGatewayRestController {
     @PostMapping("/instances")
     public ResponseEntity<String> post(@RequestBody String payload) {
         Instance instance = jsonTransformService.read(Instance.class, payload);
-        instance.setUserToken(authenticationService.getCurrentAuth0Token());
+        instance.setUserToken(authenticationService.getCurrentToken());
         String write = jsonTransformService.write(instance);
 
         this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(write).build());

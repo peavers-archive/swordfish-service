@@ -1,7 +1,6 @@
 package space.swordfish.instance.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import space.swordfish.common.auth.services.Auth0Service;
 import space.swordfish.common.auth.services.AuthenticationService;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.services.NotificationService;
@@ -11,8 +10,6 @@ import space.swordfish.instance.service.repository.InstanceRepository;
 import java.util.UUID;
 
 abstract class EC2BaseService {
-    @Autowired
-    Auth0Service auth0Service;
 
     @Autowired
     AuthenticationService authenticationService;

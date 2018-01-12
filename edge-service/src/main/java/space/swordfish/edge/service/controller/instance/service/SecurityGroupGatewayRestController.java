@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import space.swordfish.common.auth.services.AuthenticationService;
-import space.swordfish.common.json.services.JsonTransformService;
 
 @Slf4j
 @RestController
@@ -24,9 +23,6 @@ public class SecurityGroupGatewayRestController {
 
     @Autowired
     private AuthenticationService authenticationService;
-
-    @Autowired
-    private JsonTransformService jsonTransformService;
 
     @GetMapping("/security-groups")
     public ResponseEntity<String> securityGroups() {

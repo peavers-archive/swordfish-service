@@ -12,7 +12,7 @@ import org.springframework.http.client.InterceptingClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import space.swordfish.common.auth.services.Auth0Service;
+import space.swordfish.common.auth.domain.User;
 import space.swordfish.common.auth.services.AuthenticationService;
 
 import java.io.IOException;
@@ -26,19 +26,12 @@ public class AuthenticatedRestTemplateImpl implements AuthenticatedRestTemplate 
     @Autowired
     private AuthenticationService authenticationService;
 
-    @Autowired
-    private Auth0Service auth0Service;
-
     @Override
     public RestTemplate restTemplate() {
+        User currentUser = authenticationService.getCurrentUser();
 
-        if (authenticationService.getCurrentAuth0Token() == null) {
-            log.error("No token set!");
-        }
-
-        String userId = auth0Service.getUserIdFromToken(authenticationService.getCurrentAuth0Token());
-        String username = auth0Service.getUserMetaByKey(userId, "silverstripe_username");
-        String token = auth0Service.getUserMetaByKey(userId, "silverstripe_token");
+        String username = currentUser.getSilverstripeUsername();
+        String token = currentUser.getSilverstripeToken();
 
         if (username == null || token == null) {
             return null;
