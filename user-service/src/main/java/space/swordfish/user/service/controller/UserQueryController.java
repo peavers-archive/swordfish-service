@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import space.swordfish.common.auth.services.AuthenticationService;
+import space.swordfish.common.auth0.services.Auth0Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.user.service.domain.User;
 import space.swordfish.user.service.repositoriy.UserRepository;
@@ -25,6 +26,9 @@ public class UserQueryController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @Autowired
+    private Auth0Service auth0Service;
+
     @GetMapping()
     public String findAll() {
         return jsonTransformService.writeList(userRepository.findAll());
@@ -36,8 +40,7 @@ public class UserQueryController {
 
         if (user == null) {
             user = new User();
-            space.swordfish.common.auth.domain.User currentUser = authenticationService.getCurrentUser();
-            user.setId(currentUser.getId());
+            user.setId(auth0Service.getUserIdFromToken(authenticationService.getCurrentToken()));
             userRepository.save(user);
         }
 
