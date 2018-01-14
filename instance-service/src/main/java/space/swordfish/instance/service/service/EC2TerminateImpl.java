@@ -32,6 +32,9 @@ public class EC2TerminateImpl extends EC2BaseService implements EC2Terminate {
 
                     @Override
                     public void onSuccess(TerminateInstancesRequest request, TerminateInstancesResult result) {
+                        ec2UserClient.amazonEC2Async().waiters()
+                                .instanceRunning()
+                                .runAsync(ec2Waiter.describeInstancesRequestWaiterParameters(instance.getInstanceId()), ec2Waiter.describeInstancesRequestWaiterHandler());
                     }
                 });
 

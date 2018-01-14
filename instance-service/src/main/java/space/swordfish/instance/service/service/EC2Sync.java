@@ -31,6 +31,15 @@ public interface EC2Sync {
     Instance syncByInstance(Instance instance);
 
     /**
+     * Sync a single instance down from AWS based on it's instance ID. This is useful during the creation process
+     * when we don't have a local copy saved.
+     *
+     * @param id String AWS instance ID;
+     * @return
+     */
+    Instance syncByInstanceId(String id);
+
+    /**
      * Remove all instances that are local but not on AWS
      */
     List<String> instancesNotOnAmazon();

@@ -19,19 +19,12 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
 
     @Override
     public void process(Instance instance) {
-        String userToken = instance.getUserToken();
         String keyName = ec2KeyPair.setName(instance);
 
-        // Every key name must be unique, so we use this to build the seed of the ID
         instance.setId(createUniqueId(keyName));
-
-        // We need the userId set here as just about everything else uses it
         instance.setUserId(authenticationService.getCurrentUser().getId());
-
         instance.setKeyName(keyName);
         instance.setKeyBlob(ec2KeyPair.create(instance));
-
-        instanceRepository.save(instance);
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .withInstanceType(instance.getInstanceType())
@@ -43,6 +36,9 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
                 .withSubnetId(instance.getSubnetId())
                 .withTagSpecifications(buildTags(instance));
 
+        instanceRepository.save(instance);
+        refreshClientInstance(instance);
+
         ec2UserClient.amazonEC2Async().runInstancesAsync(runInstancesRequest,
                 new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
                     @Override
@@ -53,7 +49,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
 
                     @Override
                     public void onSuccess(RunInstancesRequest request, RunInstancesResult result) {
-                        refreshClientInstance(instance);
+                        onSuccessCreate(result, instance);
                     }
                 });
     }
@@ -70,5 +66,18 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
         tagSpecification.setResourceType(ResourceType.Instance);
 
         return tagSpecification;
+    }
+
+    private void onSuccessCreate(RunInstancesResult result, Instance instance) {
+        com.amazonaws.services.ec2.model.Instance newInstance = result.getReservation().getInstances().get(0);
+        instance.setInstanceId(newInstance.getInstanceId());
+
+        instanceRepository.save(instance);
+        refreshClientInstance(instance);
+        ec2Sync.syncByInstance(instance);
+
+        ec2UserClient.amazonEC2Async().waiters()
+                .instanceRunning()
+                .runAsync(ec2Waiter.describeInstancesRequestWaiterParameters(instance.getInstanceId()), ec2Waiter.describeInstancesRequestWaiterHandler());
     }
 }

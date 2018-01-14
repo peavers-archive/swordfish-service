@@ -29,7 +29,7 @@ public class EC2StopImpl extends EC2BaseService implements EC2Stop {
 
                     @Override
                     public void onSuccess(StopInstancesRequest request, StopInstancesResult result) {
-                        refreshClientInstance(instance);
+                        onSuccessStop(instance);
                     }
                 });
     }
@@ -47,9 +47,19 @@ public class EC2StopImpl extends EC2BaseService implements EC2Stop {
 
                     @Override
                     public void onSuccess(StopInstancesRequest request, StopInstancesResult result) {
-                        refreshClientInstance(instance);
+                        onSuccessStop(instance);
                     }
                 });
+    }
+
+    private void onSuccessStop(Instance instance) {
+        instanceRepository.save(instance);
+        refreshClientInstance(instance);
+        ec2Sync.syncByInstance(instance);
+
+        ec2UserClient.amazonEC2Async().waiters()
+                .instanceStopped()
+                .runAsync(ec2Waiter.describeInstancesRequestWaiterParameters(instance.getInstanceId()), ec2Waiter.describeInstancesRequestWaiterHandler());
     }
 
 }

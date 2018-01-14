@@ -29,7 +29,9 @@ public class EC2RebootImpl extends EC2BaseService implements EC2Reboot {
                     @Override
                     public void onSuccess(RebootInstancesRequest request,
                                           RebootInstancesResult result) {
-
+                        ec2UserClient.amazonEC2Async().waiters()
+                                .instanceRunning()
+                                .runAsync(ec2Waiter.describeInstancesRequestWaiterParameters(instance.getInstanceId()), ec2Waiter.describeInstancesRequestWaiterHandler());
 
                     }
                 });

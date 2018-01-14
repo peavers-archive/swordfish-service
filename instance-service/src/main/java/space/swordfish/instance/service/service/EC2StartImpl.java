@@ -28,9 +28,19 @@ public class EC2StartImpl extends EC2BaseService implements EC2Start {
 
                     @Override
                     public void onSuccess(StartInstancesRequest request, StartInstancesResult result) {
-
+                        onSuccessStart(instance);
                     }
                 });
+    }
+
+    private void onSuccessStart(Instance instance) {
+        instanceRepository.save(instance);
+        refreshClientInstance(instance);
+        ec2Sync.syncByInstance(instance);
+
+        ec2UserClient.amazonEC2Async().waiters()
+                .instanceRunning()
+                .runAsync(ec2Waiter.describeInstancesRequestWaiterParameters(instance.getInstanceId()), ec2Waiter.describeInstancesRequestWaiterHandler());
     }
 
 }

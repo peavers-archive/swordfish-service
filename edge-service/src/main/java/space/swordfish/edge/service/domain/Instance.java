@@ -4,7 +4,6 @@ import com.amazonaws.services.ec2.model.GroupIdentifier;
 import com.amazonaws.services.ec2.model.Tag;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.jasminb.jsonapi.annotations.Id;
-import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,9 +47,5 @@ public class Instance {
     String userId;
     String userName;
     String userPicture;
-
-    @Relationship("securityGroups")
-    List<SecurityGroup> securityGroups;
-
 }
 

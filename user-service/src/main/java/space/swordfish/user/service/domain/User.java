@@ -19,6 +19,10 @@ public class User {
     String auth0Id;
     String requestToken;
 
+    String displayName;
+    String pictureUrl;
+    String email;
+
     String awsKey;
     String awsSecret;
     String awsRegion;

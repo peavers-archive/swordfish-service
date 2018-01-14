@@ -29,6 +29,9 @@ abstract class EC2BaseService {
     @Autowired
     EC2Sync ec2Sync;
 
+    @Autowired
+    EC2Waiter ec2Waiter;
+
     String createUniqueId(String seed) {
         return UUID.nameUUIDFromBytes(seed.getBytes()).toString();
     }

@@ -34,7 +34,6 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         DescribeInstancesResult response = amazonEC2Async.describeInstances(request);
 
-
         return processResponse(response);
     }
 
@@ -52,6 +51,13 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
         DescribeInstancesResult response = ec2UserClient.amazonEC2Async().describeInstances(request);
 
         return processResponse(response).get(0);
+    }
+
+    @Override
+    public Instance syncByInstanceId(String id) {
+        Instance instance = instanceRepository.findByInstanceId(id);
+
+        return syncByInstance(instance);
     }
 
     @Override
@@ -90,6 +96,7 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
                 Instance instanceDetails = getInstanceDetails(instance);
                 returnedInstances.add(instanceDetails);
                 instanceRepository.save(instanceDetails);
+                refreshClientInstance(instanceDetails);
             }
         }
 
