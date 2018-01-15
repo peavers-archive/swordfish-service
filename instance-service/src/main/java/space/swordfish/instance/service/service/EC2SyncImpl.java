@@ -96,7 +96,7 @@ public class EC2SyncImpl extends EC2BaseService implements EC2Sync {
                 Instance instanceDetails = getInstanceDetails(instance);
                 returnedInstances.add(instanceDetails);
                 instanceRepository.save(instanceDetails);
-                refreshClientInstance(instanceDetails);
+                refreshClient(instanceDetails);
             }
         }
 

@@ -37,7 +37,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
                 .withTagSpecifications(buildTags(instance));
 
         instanceRepository.save(instance);
-        refreshClientInstance(instance);
+        refreshClient(instance);
 
         ec2UserClient.amazonEC2Async().runInstancesAsync(runInstancesRequest,
                 new AsyncHandler<RunInstancesRequest, RunInstancesResult>() {
@@ -73,7 +73,7 @@ public class EC2CreateImpl extends EC2BaseService implements EC2Create {
         instance.setInstanceId(newInstance.getInstanceId());
 
         instanceRepository.save(instance);
-        refreshClientInstance(instance);
+        refreshClient(instance);
         ec2Sync.syncByInstance(instance);
 
         ec2UserClient.amazonEC2Async().waiters()

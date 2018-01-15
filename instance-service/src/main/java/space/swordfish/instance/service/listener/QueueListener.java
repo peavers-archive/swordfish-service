@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,8 +13,6 @@ import space.swordfish.instance.service.domain.Instance;
 @Service
 @EnableSqs
 public class QueueListener {
-
-    private final static String SERVICE = "http://instance-service/instances";
 
     @Autowired
     private JsonTransformService jsonTransformService;
@@ -63,6 +60,6 @@ public class QueueListener {
         }
 
         // Fire the initial string payload through to the correct controller endpoint
-        restTemplate.exchange(SERVICE + endpoint, HttpMethod.POST, instanceEntity, String.class);
+        restTemplate.postForObject("http://instance-service/instances" + endpoint, instanceEntity, String.class);
     }
 }

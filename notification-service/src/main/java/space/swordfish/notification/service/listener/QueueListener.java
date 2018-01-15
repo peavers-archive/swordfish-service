@@ -1,6 +1,5 @@
 package space.swordfish.notification.service.listener;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -9,26 +8,18 @@ import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.notification.domain.Notification;
 import space.swordfish.notification.service.services.PusherService;
 
-@Slf4j
 @Service
 @EnableSqs
 public class QueueListener {
 
-    private final PusherService pusher;
-    private final JsonTransformService jsonTransformService;
+    @Autowired
+    private PusherService pusher;
 
     @Autowired
-    public QueueListener(PusherService pusher,
-                         JsonTransformService jsonTransformService) {
-        this.pusher = pusher;
-        this.jsonTransformService = jsonTransformService;
-    }
+    private JsonTransformService jsonTransformService;
 
     @MessageMapping("${queues.notificationEvents}")
     public void instanceCommandHandler(String payload) {
-
-        log.info("Message {}", payload);
-
         Notification notification = jsonTransformService.read(Notification.class,
                 payload);
 
