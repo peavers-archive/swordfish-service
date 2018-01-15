@@ -15,7 +15,10 @@ class StartupListener {
     private final AmazonSQSAsync amazonSQSAsync;
 
     @Value("${queues.userEvents}")
-    private String events;
+    private String userEvents;
+
+    @Value("${queues.teamEvents}")
+    private String teamEvents;
 
     @Autowired
     public StartupListener(AmazonSQSAsync amazonSQSAsync) {
@@ -27,7 +30,8 @@ class StartupListener {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void buildQueues() {
-        amazonSQSAsync.createQueue(events);
+        amazonSQSAsync.createQueue(userEvents);
+        amazonSQSAsync.createQueue(teamEvents);
     }
 
 }

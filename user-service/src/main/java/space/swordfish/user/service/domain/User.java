@@ -1,6 +1,7 @@
 package space.swordfish.user.service.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,4 +35,7 @@ public class User {
     String gitlabPassword;
 
     String swordfishCommand;
+
+    @Relationship("team")
+    Team team;
 }

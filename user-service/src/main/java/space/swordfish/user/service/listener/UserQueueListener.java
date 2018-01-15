@@ -13,7 +13,7 @@ import space.swordfish.user.service.domain.User;
 
 @Service
 @EnableSqs
-public class QueueListener {
+public class UserQueueListener {
 
     private final static String SERVICE = "http://user-service/users";
 

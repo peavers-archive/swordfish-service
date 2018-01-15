@@ -1,6 +1,7 @@
 package space.swordfish.edge.service.domain;
 
 import com.github.jasminb.jsonapi.annotations.Id;
+import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 import lombok.Data;
 
@@ -23,4 +24,7 @@ public class User {
     String gitlabPassword;
 
     String swordfishCommand;
+
+    @Relationship("team")
+    Team team;
 }

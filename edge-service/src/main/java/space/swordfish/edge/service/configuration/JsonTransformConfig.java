@@ -7,10 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.common.json.services.JsonTransformServiceImpl;
-import space.swordfish.edge.service.domain.Instance;
-import space.swordfish.edge.service.domain.SecurityGroup;
-import space.swordfish.edge.service.domain.StackEvent;
-import space.swordfish.edge.service.domain.User;
+import space.swordfish.edge.service.domain.*;
 
 @Configuration
 public class JsonTransformConfig {
@@ -21,7 +18,12 @@ public class JsonTransformConfig {
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
 
         ResourceConverter resourceConverter = new ResourceConverter(objectMapper,
-                Instance.class, StackEvent.class, User.class, SecurityGroup.class);
+                Instance.class,
+                StackEvent.class,
+                User.class,
+                SecurityGroup.class,
+                Team.class
+        );
 
         return new JsonTransformServiceImpl(resourceConverter);
     }
@@ -31,7 +33,13 @@ public class JsonTransformConfig {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
 
-        return new ResourceConverter(objectMapper, Instance.class, StackEvent.class, User.class, SecurityGroup.class);
+        return new ResourceConverter(objectMapper,
+                Instance.class,
+                StackEvent.class,
+                User.class,
+                Team.class,
+                SecurityGroup.class
+        );
     }
 
 }
