@@ -15,8 +15,10 @@ import java.util.List;
 public class Team extends BaseDomain {
 
     String name;
-    String ownerId;
 
-    @Relationship("user")
-    List<User> users;
+    @Relationship("owner")
+    User owner;
+
+    @Relationship("members")
+    List<User> members;
 }

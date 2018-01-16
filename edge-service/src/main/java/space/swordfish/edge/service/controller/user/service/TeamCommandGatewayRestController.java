@@ -1,5 +1,7 @@
 package space.swordfish.edge.service.controller.user.service;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,8 @@ public class TeamCommandGatewayRestController {
 
     @PostMapping("/teams")
     public ResponseEntity<String> post(@RequestBody String payload) {
+        log.info(new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(payload)));
+
         Team team = jsonTransformService.read(Team.class, payload);
         team.setRequestToken(authenticationService.getCurrentToken());
 
@@ -46,11 +50,26 @@ public class TeamCommandGatewayRestController {
      * @return ResponseEntity OK
      */
     @PatchMapping("/teams/{id}")
-    @DeleteMapping("/teams/{id}")
     public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
         post(payload);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * This is just here to keep the EmberJS client happy. Just forwards the payload to the standard post method.
+     *
+     * @param id String representing the ID of that user
+     * @return ResponseEntity OK
+     */
+    @DeleteMapping("/teams/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") String id) {
+        Team team = new Team();
+        team.setId(id);
+        team.setSwordfishCommand("delete");
+
+        post(jsonTransformService.write(team));
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

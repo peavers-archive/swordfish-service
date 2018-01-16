@@ -13,10 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Team extends BaseDomain {
-
     String name;
-    String ownerId;
 
-    @Relationship("user")
-    List<User> users;
+    @Relationship("owner")
+    User owner;
+
+    @Relationship("members")
+    List<User> members;
 }

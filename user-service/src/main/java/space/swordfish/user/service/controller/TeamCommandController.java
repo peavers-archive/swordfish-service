@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import space.swordfish.common.auth0.services.Auth0Service;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.user.service.domain.Team;
+import space.swordfish.user.service.repositoriy.TeamRepository;
 import space.swordfish.user.service.service.TeamService;
 
 @Slf4j
@@ -23,14 +23,11 @@ public class TeamCommandController {
     private TeamService teamService;
 
     @Autowired
-    private Auth0Service auth0Service;
+    private TeamRepository teamRepository;
 
     @PostMapping("/create")
     public void create(@RequestBody String payload) {
         Team team = jsonTransformService.read(Team.class, payload);
-
-        String ownerId = auth0Service.getUserIdFromToken(team.getRequestToken());
-        team.setOwnerId(ownerId);
 
         teamService.create(team);
     }
@@ -42,7 +39,10 @@ public class TeamCommandController {
 
     @PostMapping("/delete")
     public void delete(@RequestBody String payload) {
-        teamService.delete(jsonTransformService.read(Team.class, payload));
+        Team team = jsonTransformService.read(Team.class, payload);
+        Team realTeam = teamRepository.findById(team.getId());
+
+        teamService.delete(realTeam);
     }
 
 }

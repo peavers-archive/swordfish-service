@@ -12,19 +12,15 @@ public class User {
     String id;
     String auth0Id;
     String requestToken;
-
     String awsKey;
     String awsSecret;
     String awsRegion;
-
     String silverstripeUsername;
     String silverstripeToken;
-
     String gitlabUsername;
     String gitlabPassword;
-
     String swordfishCommand;
 
-    @Relationship("team")
+    @Relationship("members")
     Team team;
 }
