@@ -5,7 +5,6 @@ import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -13,15 +12,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document
 @Type("users")
-public class User {
-    @Id
-    @com.github.jasminb.jsonapi.annotations.Id
-    String id;
-    String auth0Id;
-    String requestToken;
-    String displayName;
-    String pictureUrl;
+public class User extends BaseDomain {
+    // Profile settings
     String email;
+    String familyName;
+    String givenName;
+    String nickName;
+    String name;
+    String picture;
+    String username;
+
+    // Swordfish settings
     String awsKey;
     String awsSecret;
     String awsRegion;
@@ -29,8 +30,10 @@ public class User {
     String silverstripeToken;
     String gitlabUsername;
     String gitlabPassword;
-    String swordfishCommand;
 
-    @Relationship("members")
+    // Team settings
+    @Relationship("team")
     Team team;
+    String teamId;
+    String teamState = "none";
 }

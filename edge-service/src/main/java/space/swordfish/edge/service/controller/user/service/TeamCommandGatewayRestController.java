@@ -51,6 +51,8 @@ public class TeamCommandGatewayRestController {
      */
     @PatchMapping("/teams/{id}")
     public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
+        log.info(new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(payload)));
+
         post(payload);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

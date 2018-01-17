@@ -38,11 +38,25 @@ public class UserQueryController {
     public String findById(@PathVariable String id) {
         User user = userRepository.findById(id);
 
+        String idFromToken = auth0Service.getUserIdFromToken(authenticationService.getCurrentToken());
+        com.auth0.json.mgmt.users.User auth0ServiceUser = auth0Service.getUser(idFromToken);
+
         if (user == null) {
             user = new User();
-            user.setId(auth0Service.getUserIdFromToken(authenticationService.getCurrentToken()));
-            userRepository.save(user);
         }
+
+        user.setId(auth0ServiceUser.getId());
+        user.setEmail(auth0ServiceUser.getEmail());
+        user.setFamilyName(auth0ServiceUser.getFamilyName());
+        user.setGivenName(auth0ServiceUser.getGivenName());
+        user.setNickName(auth0ServiceUser.getNickname());
+        user.setName(auth0ServiceUser.getName());
+        user.setPicture(auth0ServiceUser.getPicture());
+        user.setUsername(auth0ServiceUser.getUsername());
+
+        userRepository.save(user);
+
+        log.info("Updated User {}", user);
 
         return jsonTransformService.write(user);
     }

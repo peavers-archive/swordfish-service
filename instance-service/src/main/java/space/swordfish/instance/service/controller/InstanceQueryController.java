@@ -10,8 +10,6 @@ import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.instance.service.repository.InstanceRepository;
 import space.swordfish.instance.service.service.EC2Sync;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/instances")
@@ -25,16 +23,6 @@ public class InstanceQueryController {
 
     @Autowired
     private EC2Sync ec2Sync;
-
-    @GetMapping("refresh-all")
-    public String refreshAll() {
-        List<String> notOnAmazon = ec2Sync.instancesNotOnAmazon();
-        for (String instanceId : notOnAmazon) {
-            instanceRepository.deleteByInstanceId(instanceId);
-        }
-
-        return jsonTransformService.writeList(ec2Sync.syncAll());
-    }
 
     @GetMapping()
     public String findAll() {
