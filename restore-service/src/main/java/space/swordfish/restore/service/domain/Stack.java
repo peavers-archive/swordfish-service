@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.restore.service.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,12 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Stack {
 
-    @Id
-    String id;
-    String name;
-    String title;
-    String created;
+  @Id String id;
+  String name;
+  String title;
+  String created;
 
-    @JsonProperty("created_unix")
-    String createdUnix;
+  @JsonProperty("created_unix")
+  String createdUnix;
 }

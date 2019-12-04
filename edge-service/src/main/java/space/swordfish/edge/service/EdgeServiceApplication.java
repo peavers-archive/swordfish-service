@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.edge.service;
 
 import org.springframework.boot.SpringApplication;
@@ -15,8 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 public class EdgeServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EdgeServiceApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(EdgeServiceApplication.class, args);
+  }
 }

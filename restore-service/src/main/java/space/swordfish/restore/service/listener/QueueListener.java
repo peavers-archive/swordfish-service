@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.restore.service.listener;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,21 +18,19 @@ import space.swordfish.restore.service.domain.StackEvent;
 @EnableSqs
 public class QueueListener {
 
-    private final static String SERVICE = "http://restore-service";
+  private static final String SERVICE = "http://restore-service";
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private RestTemplate restTemplate;
+  @Autowired private RestTemplate restTemplate;
 
-    @MessageMapping("${queues.restoreEvents}")
-    public void restoreCommandHandler(String payload) {
-        StackEvent stackEvent = jsonTransformService.read(StackEvent.class, payload);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + stackEvent.getUserToken());
-        HttpEntity<String> stackEntity = new HttpEntity<>(payload, headers);
+  @MessageMapping("${queues.restoreEvents}")
+  public void restoreCommandHandler(String payload) {
+    StackEvent stackEvent = jsonTransformService.read(StackEvent.class, payload);
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Bearer " + stackEvent.getUserToken());
+    HttpEntity<String> stackEntity = new HttpEntity<>(payload, headers);
 
-        restTemplate.exchange(SERVICE + "/stacks/create", HttpMethod.POST, stackEntity, String.class);
-    }
+    restTemplate.exchange(SERVICE + "/stacks/create", HttpMethod.POST, stackEntity, String.class);
+  }
 }

@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,21 +14,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @Type("users")
 public class User {
-    @Id
-    @com.github.jasminb.jsonapi.annotations.Id
-    String id;
-    String auth0Id;
-    String requestToken;
+  @Id @com.github.jasminb.jsonapi.annotations.Id String id;
+  String auth0Id;
+  String requestToken;
 
-    String awsKey;
-    String awsSecret;
-    String awsRegion;
+  String awsKey;
+  String awsSecret;
+  String awsRegion;
 
-    String silverstripeUsername;
-    String silverstripeToken;
+  String silverstripeUsername;
+  String silverstripeToken;
 
-    String gitlabUsername;
-    String gitlabPassword;
+  String gitlabUsername;
+  String gitlabPassword;
 
-    String swordfishCommand;
+  String swordfishCommand;
 }

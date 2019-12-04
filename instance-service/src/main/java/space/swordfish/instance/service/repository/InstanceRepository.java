@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service.repository;
 
 import org.springframework.data.repository.CrudRepository;
@@ -7,19 +8,19 @@ import space.swordfish.instance.service.domain.Instance;
 @RepositoryRestResource
 public interface InstanceRepository extends CrudRepository<Instance, String> {
 
-    Instance findByInstanceId(String instanceId);
+  Instance findByInstanceId(String instanceId);
 
-    Instance findByKeyName(String keyName);
+  Instance findByKeyName(String keyName);
 
-    Instance findById(String id);
+  Instance findById(String id);
 
-    Iterable<Instance> findAllByStateAndProduction(String state, boolean production);
+  Iterable<Instance> findAllByStateAndProduction(String state, boolean production);
 
-    Iterable<Instance> findAllByStateAndSwordfishIsTrueAndProductionIsFalse(String state);
+  Iterable<Instance> findAllByStateAndSwordfishIsTrueAndProductionIsFalse(String state);
 
-    void deleteByInstanceId(String instanceId);
+  void deleteByInstanceId(String instanceId);
 
-    Iterable<Instance> findAllByState(String terminated);
+  Iterable<Instance> findAllByState(String terminated);
 
-    Iterable<Instance> findAllByUserId(String userId);
+  Iterable<Instance> findAllByUserId(String userId);
 }

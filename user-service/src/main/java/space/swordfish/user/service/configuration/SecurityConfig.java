@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.configuration;
 
 import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
@@ -17,20 +18,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value(value = "${auth0.audience}")
-    private String audience;
+  @Value(value = "${auth0.audience}")
+  private String audience;
 
-    @Value(value = "${auth0.issuer}")
-    private String issuer;
+  @Value(value = "${auth0.issuer}")
+  private String issuer;
 
-    public SecurityConfig() {
-        super();
-        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
-    }
+  public SecurityConfig() {
+    super();
+    SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+  }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        JwtWebSecurityConfigurer.forRS256(audience, issuer).configure(httpSecurity)
-                .authorizeRequests().antMatchers("/health").permitAll();
-    }
+  @Override
+  protected void configure(HttpSecurity httpSecurity) throws Exception {
+    JwtWebSecurityConfigurer.forRS256(audience, issuer)
+        .configure(httpSecurity)
+        .authorizeRequests()
+        .antMatchers("/health")
+        .permitAll();
+  }
 }

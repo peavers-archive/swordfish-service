@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,21 +9,20 @@ import space.swordfish.user.service.repositoriy.TeamRepository;
 @Service
 public class TeamServiceImpl implements TeamService {
 
-    @Autowired
-    private TeamRepository teamRepository;
+  @Autowired private TeamRepository teamRepository;
 
-    @Override
-    public void create(Team team) {
-        teamRepository.save(team);
-    }
+  @Override
+  public void create(Team team) {
+    teamRepository.save(team);
+  }
 
-    @Override
-    public void update(Team team) {
-        teamRepository.save(team);
-    }
+  @Override
+  public void update(Team team) {
+    teamRepository.save(team);
+  }
 
-    @Override
-    public void delete(Team team) {
-        teamRepository.delete(team);
-    }
+  @Override
+  public void delete(Team team) {
+    teamRepository.delete(team);
+  }
 }

@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,9 +11,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class BaseDomain {
 
-    @Id
-    String id;
-    String requestToken;
-    String swordfishCommand;
-
+  @Id String id;
+  String requestToken;
+  String swordfishCommand;
 }

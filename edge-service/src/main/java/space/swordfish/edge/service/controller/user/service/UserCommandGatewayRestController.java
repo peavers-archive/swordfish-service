@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.edge.service.controller.user.service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,41 +17,39 @@ import space.swordfish.edge.service.domain.User;
 @RestController
 public class UserCommandGatewayRestController {
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private QueueMessagingTemplate queueMessagingTemplate;
+  @Autowired private QueueMessagingTemplate queueMessagingTemplate;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private AuthenticationService authenticationService;
 
-    @Value("${queues.userEvents}")
-    private String queue;
+  @Value("${queues.userEvents}")
+  private String queue;
 
-    @PostMapping("/users")
-    public ResponseEntity<String> post(@RequestBody String payload) {
-        User user = jsonTransformService.read(User.class, payload);
-        user.setRequestToken(authenticationService.getCurrentToken());
+  @PostMapping("/users")
+  public ResponseEntity<String> post(@RequestBody String payload) {
+    User user = jsonTransformService.read(User.class, payload);
+    user.setRequestToken(authenticationService.getCurrentToken());
 
-        this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(jsonTransformService.write(user)).build());
+    this.queueMessagingTemplate.send(
+        queue, MessageBuilder.withPayload(jsonTransformService.write(user)).build());
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * This is just here to keep the EmberJS client happy. Just forwards the payload to the standard post method.
-     *
-     * @param payload String representing a User object
-     * @param id      String representing the ID of that user
-     * @return ResponseEntity OK
-     */
-    @PatchMapping("/users/{id}")
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
-        post(payload);
+  /**
+   * This is just here to keep the EmberJS client happy. Just forwards the payload to the standard
+   * post method.
+   *
+   * @param payload String representing a User object
+   * @param id String representing the ID of that user
+   * @return ResponseEntity OK
+   */
+  @PatchMapping("/users/{id}")
+  @DeleteMapping("/users/{id}")
+  public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
+    post(payload);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }

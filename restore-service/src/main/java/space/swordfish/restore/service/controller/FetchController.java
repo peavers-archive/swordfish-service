@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.restore.service.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,21 +12,21 @@ import space.swordfish.restore.service.api.fetch.SilverstripeGitFetch;
 @RestController
 public class FetchController {
 
-    private final SilverstripeGitFetch silverstripeGitFetch;
+  private final SilverstripeGitFetch silverstripeGitFetch;
 
-    @Autowired
-    public FetchController(SilverstripeGitFetch silverstripeGitFetch) {
-        this.silverstripeGitFetch = silverstripeGitFetch;
-    }
+  @Autowired
+  public FetchController(SilverstripeGitFetch silverstripeGitFetch) {
+    this.silverstripeGitFetch = silverstripeGitFetch;
+  }
 
-    @PostMapping("/git/{projectId}")
-    public JsonNode create(@PathVariable("projectId") String projectId) {
-        return silverstripeGitFetch.create(projectId).getBody();
-    }
+  @PostMapping("/git/{projectId}")
+  public JsonNode create(@PathVariable("projectId") String projectId) {
+    return silverstripeGitFetch.create(projectId).getBody();
+  }
 
-    @GetMapping("/git/{projectId}/{fetchId}")
-    public JsonNode view(@PathVariable("projectId") String projectId,
-                         @PathVariable("fetchId") String fetchId) {
-        return silverstripeGitFetch.view(projectId, fetchId).getBody();
-    }
+  @GetMapping("/git/{projectId}/{fetchId}")
+  public JsonNode view(
+      @PathVariable("projectId") String projectId, @PathVariable("fetchId") String fetchId) {
+    return silverstripeGitFetch.view(projectId, fetchId).getBody();
+  }
 }

@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service.service;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -14,45 +15,43 @@ import space.swordfish.common.auth.services.AuthenticationService;
 @Service
 public class EC2UserClientImpl extends EC2BaseService implements EC2UserClient {
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private AuthenticationService authenticationService;
 
-    @Override
-    public AmazonEC2Async amazonEC2Async() {
-        User user = authenticationService.getCurrentUser();
+  @Override
+  public AmazonEC2Async amazonEC2Async() {
+    User user = authenticationService.getCurrentUser();
 
-        String accessKey = user.getAwsKey();
-        String secretKey = user.getAwsSecret();
-        String region = user.getAwsRegion();
+    String accessKey = user.getAwsKey();
+    String secretKey = user.getAwsSecret();
+    String region = user.getAwsRegion();
 
-        if (secretKey.equals("") || accessKey.equals("") || region.equals("")) {
-            return null;
-        }
-
-        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(
-                accessKey, secretKey);
-
-        return AmazonEC2AsyncClientBuilder.standard().withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
-                .build();
+    if (secretKey.equals("") || accessKey.equals("") || region.equals("")) {
+      return null;
     }
 
-    @Override
-    public AmazonEC2Async amazonEC2Async(User user) {
-        String accessKey = user.getAwsKey();
-        String secretKey = user.getAwsSecret();
-        String region = user.getAwsRegion();
+    BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
 
-        if (secretKey.equals("") || accessKey.equals("") || region.equals("")) {
-            return null;
-        }
+    return AmazonEC2AsyncClientBuilder.standard()
+        .withRegion(region)
+        .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
+        .build();
+  }
 
-        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(
-                accessKey, secretKey);
+  @Override
+  public AmazonEC2Async amazonEC2Async(User user) {
+    String accessKey = user.getAwsKey();
+    String secretKey = user.getAwsSecret();
+    String region = user.getAwsRegion();
 
-        return AmazonEC2AsyncClientBuilder.standard().withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
-                .build();
+    if (secretKey.equals("") || accessKey.equals("") || region.equals("")) {
+      return null;
     }
 
+    BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
+
+    return AmazonEC2AsyncClientBuilder.standard()
+        .withRegion(region)
+        .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
+        .build();
+  }
 }

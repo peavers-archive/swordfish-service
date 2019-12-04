@@ -4,10 +4,14 @@ buildscript {
     }
     repositories {
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE")
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.26.1"
     }
 }
 
@@ -36,6 +40,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: "com.diffplug.gradle.spotless"
 
     group = 'space.swordfish'
     version = '1.0'
@@ -74,4 +79,14 @@ subprojects {
             csv.enabled false
         }
     }
+
+    spotless {
+        java {
+            licenseHeader '/* Licensed under Apache-2.0 */'
+            importOrder 'java', 'javax', 'org', 'com', ''
+            removeUnusedImports()
+            googleJavaFormat()
+        }
+    }
+
 }

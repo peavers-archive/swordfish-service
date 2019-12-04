@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service;
 
 import org.springframework.boot.SpringApplication;
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 public class InstanceServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(InstanceServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(InstanceServiceApplication.class, args);
+  }
 }

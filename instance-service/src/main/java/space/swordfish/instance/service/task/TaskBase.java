@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,16 +9,11 @@ import space.swordfish.instance.service.repository.InstanceRepository;
 
 abstract class TaskBase {
 
-    @Autowired
-    ThreadPoolTaskScheduler taskScheduler;
+  @Autowired ThreadPoolTaskScheduler taskScheduler;
 
-    @Autowired
-    NotificationService notificationService;
+  @Autowired NotificationService notificationService;
 
-    @Autowired
-    JsonTransformService jsonTransformService;
+  @Autowired JsonTransformService jsonTransformService;
 
-    @Autowired
-    InstanceRepository instanceRepository;
-
+  @Autowired InstanceRepository instanceRepository;
 }

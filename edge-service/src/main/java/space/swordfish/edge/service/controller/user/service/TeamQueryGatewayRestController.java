@@ -1,5 +1,5 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.edge.service.controller.user.service;
-
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +17,29 @@ import space.swordfish.common.auth.services.AuthenticationService;
 @RestController
 public class TeamQueryGatewayRestController {
 
-    private final static String SERVICE = "http://user-service/teams";
+  private static final String SERVICE = "http://user-service/teams";
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private AuthenticationService authenticationService;
 
-    @LoadBalanced
-    @Autowired
-    private RestTemplate restTemplate;
+  @LoadBalanced @Autowired private RestTemplate restTemplate;
 
-    @GetMapping("/teams")
-    public ResponseEntity<String> teams() {
-        ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
-        };
+  @GetMapping("/teams")
+  public ResponseEntity<String> teams() {
+    ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {};
 
-        return restTemplate.exchange(SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
-    }
+    return restTemplate.exchange(
+        SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
+  }
 
-    @GetMapping("/teams/{id}")
-    public ResponseEntity<String> teamsById(@PathVariable String id) {
-        ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
-        };
+  @GetMapping("/teams/{id}")
+  public ResponseEntity<String> teamsById(@PathVariable String id) {
+    ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {};
 
-        return restTemplate.exchange(SERVICE + "/{id}", HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference, id);
-    }
+    return restTemplate.exchange(
+        SERVICE + "/{id}",
+        HttpMethod.GET,
+        authenticationService.addAuthenticationHeader(),
+        reference,
+        id);
+  }
 }

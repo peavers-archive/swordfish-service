@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service.controller;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,22 +16,19 @@ import space.swordfish.instance.service.service.EC2Sync;
 @RequestMapping("/instances")
 public class InstanceQueryController {
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private InstanceRepository instanceRepository;
+  @Autowired private InstanceRepository instanceRepository;
 
-    @Autowired
-    private EC2Sync ec2Sync;
+  @Autowired private EC2Sync ec2Sync;
 
-    @GetMapping()
-    public String findAll() {
-        return jsonTransformService.writeList(instanceRepository.findAll());
-    }
+  @GetMapping()
+  public String findAll() {
+    return jsonTransformService.writeList(instanceRepository.findAll());
+  }
 
-    @GetMapping("/{id}")
-    public String findById(@PathVariable String id) {
-        return jsonTransformService.write(instanceRepository.findById(id));
-    }
+  @GetMapping("/{id}")
+  public String findById(@PathVariable String id) {
+    return jsonTransformService.write(instanceRepository.findById(id));
+  }
 }
