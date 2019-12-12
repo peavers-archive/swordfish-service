@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service.controller;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +14,12 @@ import space.swordfish.instance.service.service.EC2SecurityGroups;
 @RequestMapping("/security-groups")
 public class SecurityGroupController {
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private EC2SecurityGroups ec2SecurityGroups;
+  @Autowired private EC2SecurityGroups ec2SecurityGroups;
 
-    @GetMapping()
-    public String findAll() {
-        return jsonTransformService.writeList(ec2SecurityGroups.getAll());
-    }
+  @GetMapping()
+  public String findAll() {
+    return jsonTransformService.writeList(ec2SecurityGroups.getAll());
+  }
 }

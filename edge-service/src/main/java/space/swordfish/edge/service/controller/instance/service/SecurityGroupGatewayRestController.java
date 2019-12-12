@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.edge.service.controller.instance.service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,21 +16,17 @@ import space.swordfish.common.auth.services.AuthenticationService;
 @RestController
 public class SecurityGroupGatewayRestController {
 
-    private final static String SERVICE = "http://instance-service/security-groups";
+  private static final String SERVICE = "http://instance-service/security-groups";
 
-    @LoadBalanced
-    @Autowired
-    private RestTemplate restTemplate;
+  @LoadBalanced @Autowired private RestTemplate restTemplate;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private AuthenticationService authenticationService;
 
-    @GetMapping("/security-groups")
-    public ResponseEntity<String> securityGroups() {
-        ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
-        };
+  @GetMapping("/security-groups")
+  public ResponseEntity<String> securityGroups() {
+    ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {};
 
-        return restTemplate.exchange(SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
-    }
-
+    return restTemplate.exchange(
+        SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
+  }
 }

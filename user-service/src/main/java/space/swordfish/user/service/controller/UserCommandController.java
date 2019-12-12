@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.controller;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,25 +16,22 @@ import space.swordfish.user.service.service.UserService;
 @RequestMapping("/users")
 public class UserCommandController {
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private UserService userService;
+  @Autowired private UserService userService;
 
-    @PostMapping("/create")
-    public void create(@RequestBody String payload) {
-        userService.create(jsonTransformService.read(User.class, payload));
-    }
+  @PostMapping("/create")
+  public void create(@RequestBody String payload) {
+    userService.create(jsonTransformService.read(User.class, payload));
+  }
 
-    @PostMapping("/update")
-    public void update(@RequestBody String payload) {
-        userService.update(jsonTransformService.read(User.class, payload));
-    }
+  @PostMapping("/update")
+  public void update(@RequestBody String payload) {
+    userService.update(jsonTransformService.read(User.class, payload));
+  }
 
-    @PostMapping("/delete")
-    public void delete(@RequestBody String payload) {
-        userService.delete(jsonTransformService.read(User.class, payload));
-    }
-
+  @PostMapping("/delete")
+  public void delete(@RequestBody String payload) {
+    userService.delete(jsonTransformService.read(User.class, payload));
+  }
 }

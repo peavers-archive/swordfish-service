@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.controller;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,33 +17,29 @@ import space.swordfish.user.service.service.TeamService;
 @RequestMapping("/teams")
 public class TeamCommandController {
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private TeamService teamService;
+  @Autowired private TeamService teamService;
 
-    @Autowired
-    private TeamRepository teamRepository;
+  @Autowired private TeamRepository teamRepository;
 
-    @PostMapping("/create")
-    public void create(@RequestBody String payload) {
-        Team team = jsonTransformService.read(Team.class, payload);
+  @PostMapping("/create")
+  public void create(@RequestBody String payload) {
+    Team team = jsonTransformService.read(Team.class, payload);
 
-        teamService.create(team);
-    }
+    teamService.create(team);
+  }
 
-    @PostMapping("/update")
-    public void update(@RequestBody String payload) {
-        teamService.update(jsonTransformService.read(Team.class, payload));
-    }
+  @PostMapping("/update")
+  public void update(@RequestBody String payload) {
+    teamService.update(jsonTransformService.read(Team.class, payload));
+  }
 
-    @PostMapping("/delete")
-    public void delete(@RequestBody String payload) {
-        Team team = jsonTransformService.read(Team.class, payload);
-        Team realTeam = teamRepository.findById(team.getId());
+  @PostMapping("/delete")
+  public void delete(@RequestBody String payload) {
+    Team team = jsonTransformService.read(Team.class, payload);
+    Team realTeam = teamRepository.findById(team.getId());
 
-        teamService.delete(realTeam);
-    }
-
+    teamService.delete(realTeam);
+  }
 }

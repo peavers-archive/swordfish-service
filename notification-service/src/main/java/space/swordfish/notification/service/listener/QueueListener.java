@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.notification.service.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +13,14 @@ import space.swordfish.notification.service.services.PusherService;
 @EnableSqs
 public class QueueListener {
 
-    @Autowired
-    private PusherService pusher;
+  @Autowired private PusherService pusher;
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @MessageMapping("${queues.notificationEvents}")
-    public void instanceCommandHandler(String payload) {
-        Notification notification = jsonTransformService.read(Notification.class,
-                payload);
+  @MessageMapping("${queues.notificationEvents}")
+  public void instanceCommandHandler(String payload) {
+    Notification notification = jsonTransformService.read(Notification.class, payload);
 
-        pusher.push(notification.getChannel(), notification.getEvent(),
-                notification.getMessage());
-    }
+    pusher.push(notification.getChannel(), notification.getEvent(), notification.getMessage());
+  }
 }

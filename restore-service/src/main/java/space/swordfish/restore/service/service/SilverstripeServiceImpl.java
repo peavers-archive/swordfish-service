@@ -1,6 +1,9 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.restore.service.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.List;
+import java.util.concurrent.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,83 +17,82 @@ import space.swordfish.restore.service.domain.Stack;
 import space.swordfish.restore.service.domain.StackEvent;
 import space.swordfish.restore.service.domain.Transfer;
 
-import java.util.List;
-import java.util.concurrent.*;
-
 @Slf4j
 @Service
 public class SilverstripeServiceImpl implements SilverstripeService {
 
-    @Autowired
-    private SilverstripeStack silverstripeStack;
+  @Autowired private SilverstripeStack silverstripeStack;
 
-    @Autowired
-    private SilverstripeSnapshot silverstripeSnapshot;
+  @Autowired private SilverstripeSnapshot silverstripeSnapshot;
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private NotificationService notificationService;
+  @Autowired private NotificationService notificationService;
 
-    @Override
-    public List<Stack> getAllStacks() {
-        return jsonTransformService
-                .readList(Stack.class, silverstripeStack.listAll().getBody().toString())
-                .get();
-    }
+  @Override
+  public List<Stack> getAllStacks() {
+    return jsonTransformService
+        .readList(Stack.class, silverstripeStack.listAll().getBody().toString())
+        .get();
+  }
 
-    @Override
-    public Future<String> createSnapshot(String projectId, StackEvent stackEvent) {
+  @Override
+  public Future<String> createSnapshot(String projectId, StackEvent stackEvent) {
 
-        Callable<String> task = () -> {
-            String createResult = silverstripeSnapshot.create(stackEvent.getProjectId(), stackEvent).getBody().toString();
+    Callable<String> task =
+        () -> {
+          String createResult =
+              silverstripeSnapshot
+                  .create(stackEvent.getProjectId(), stackEvent)
+                  .getBody()
+                  .toString();
 
-            Transfer transferProgress = getTransferProgress(stackEvent.getProjectId(), createResult);
+          Transfer transferProgress = getTransferProgress(stackEvent.getProjectId(), createResult);
 
-            while (!transferProgress.getStatus().equals("Finished")) {
-                transferProgress = getTransferProgress(stackEvent.getProjectId(), createResult);
+          while (!transferProgress.getStatus().equals("Finished")) {
+            transferProgress = getTransferProgress(stackEvent.getProjectId(), createResult);
 
-                notificationService.send("restore_event", "restore_info",
-                        jsonTransformService.write(stackEvent));
+            notificationService.send(
+                "restore_event", "restore_info", jsonTransformService.write(stackEvent));
 
-                TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(2);
 
-                if (transferProgress.getStatus().equals("Failed")) {
-                    log.warn("Failed snapshot");
-                    break;
-                }
+            if (transferProgress.getStatus().equals("Failed")) {
+              log.warn("Failed snapshot");
+              break;
             }
+          }
 
-            notificationService.send("restore_event", "restore_success",
-                    jsonTransformService.write(stackEvent));
+          notificationService.send(
+              "restore_event", "restore_success", jsonTransformService.write(stackEvent));
 
-            ResponseEntity<JsonNode> completeTransferData = silverstripeSnapshot.view(projectId, transferProgress.getSnapshot().getId());
+          ResponseEntity<JsonNode> completeTransferData =
+              silverstripeSnapshot.view(projectId, transferProgress.getSnapshot().getId());
 
-            return setStackIdOnSnapshot(completeTransferData.getBody().toString(), projectId);
+          return setStackIdOnSnapshot(completeTransferData.getBody().toString(), projectId);
         };
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+    ExecutorService executor = Executors.newFixedThreadPool(10);
 
-        return executor.submit(task);
-    }
+    return executor.submit(task);
+  }
 
-    private String setStackIdOnSnapshot(String payload, String stackId) {
-        Snapshot snapshot = jsonTransformService.read(Snapshot.class, payload);
-        snapshot.setStackId(stackId);
+  private String setStackIdOnSnapshot(String payload, String stackId) {
+    Snapshot snapshot = jsonTransformService.read(Snapshot.class, payload);
+    snapshot.setStackId(stackId);
 
-        log.info("Complete snapshot {}", snapshot);
+    log.info("Complete snapshot {}", snapshot);
 
-        return jsonTransformService.write(snapshot);
-    }
+    return jsonTransformService.write(snapshot);
+  }
 
-    private Transfer getTransferProgress(String projectId, String createResult) {
-        Transfer transfer = jsonTransformService.read(Transfer.class, createResult);
-        ResponseEntity<JsonNode> transferState = silverstripeSnapshot.transfer(projectId, transfer.getId());
+  private Transfer getTransferProgress(String projectId, String createResult) {
+    Transfer transfer = jsonTransformService.read(Transfer.class, createResult);
+    ResponseEntity<JsonNode> transferState =
+        silverstripeSnapshot.transfer(projectId, transfer.getId());
 
-        log.info("Transfer state {}", transfer);
+    log.info("Transfer state {}", transfer);
 
-        return jsonTransformService.read(Transfer.class, transferState.getBody().toString());
-    }
-
+    return jsonTransformService.read(Transfer.class, transferState.getBody().toString());
+  }
 }

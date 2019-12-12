@@ -1,6 +1,8 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.edge.service.controller.restore.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,41 +17,35 @@ import space.swordfish.common.auth.services.AuthenticationService;
 import space.swordfish.common.json.services.JsonTransformService;
 import space.swordfish.edge.service.domain.StackEvent;
 
-import java.io.IOException;
-
 @Slf4j
 @RestController
 public class RestoreCommandGatewayRestController {
 
-    @Autowired
-    private QueueMessagingTemplate queueMessagingTemplate;
+  @Autowired private QueueMessagingTemplate queueMessagingTemplate;
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private AuthenticationService authenticationService;
 
-    @Value("${queues.restoreEvents}")
-    private String queue;
+  @Value("${queues.restoreEvents}")
+  private String queue;
 
-    @PostMapping("/stack-events")
-    public ResponseEntity<String> event(@RequestBody String payload) {
-        try {
-            String result = java.net.URLDecoder.decode(payload, "UTF-8");
-            ObjectMapper objectMapper = new ObjectMapper();
+  @PostMapping("/stack-events")
+  public ResponseEntity<String> event(@RequestBody String payload) {
+    try {
+      String result = java.net.URLDecoder.decode(payload, "UTF-8");
+      ObjectMapper objectMapper = new ObjectMapper();
 
-            StackEvent stackEvent = objectMapper.readValue(result, StackEvent.class);
-            stackEvent.setUserToken(authenticationService.getCurrentToken());
+      StackEvent stackEvent = objectMapper.readValue(result, StackEvent.class);
+      stackEvent.setUserToken(authenticationService.getCurrentToken());
 
-            payload = jsonTransformService.write(stackEvent);
+      payload = jsonTransformService.write(stackEvent);
 
-            this.queueMessagingTemplate.send(queue,
-                    MessageBuilder.withPayload(payload).build());
-        } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
-        }
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+      this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(payload).build());
+    } catch (IOException e) {
+      log.error(e.getLocalizedMessage());
     }
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }

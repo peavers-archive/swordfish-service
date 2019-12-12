@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,44 +16,46 @@ import space.swordfish.user.service.domain.User;
 @EnableSqs
 public class UserQueueListener {
 
-    private final static String SERVICE = "http://user-service/users";
+  private static final String SERVICE = "http://user-service/users";
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private RestTemplate restTemplate;
+  @Autowired private RestTemplate restTemplate;
 
-    @MessageMapping("${queues.userEvents}")
-    public void instanceCommandHandler(String payload) {
-        User user = jsonTransformService.read(User.class, payload);
+  @MessageMapping("${queues.userEvents}")
+  public void instanceCommandHandler(String payload) {
+    User user = jsonTransformService.read(User.class, payload);
 
-        // Load the JWT into the internal request header
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + user.getRequestToken());
-        HttpEntity<String> userEntity = new HttpEntity<>(payload, headers);
+    // Load the JWT into the internal request header
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Bearer " + user.getRequestToken());
+    HttpEntity<String> userEntity = new HttpEntity<>(payload, headers);
 
-        // Decide and set where to fire the request to
-        String endpoint;
-        switch (user.getSwordfishCommand()) {
-            case "create": {
-                endpoint = "/create";
-                break;
-            }
-            case "update": {
-                endpoint = "/update";
-                break;
-            }
-            case "delete": {
-                endpoint = "/delete";
-                break;
-            }
-            default: {
-                endpoint = "/error";
-            }
+    // Decide and set where to fire the request to
+    String endpoint;
+    switch (user.getSwordfishCommand()) {
+      case "create":
+        {
+          endpoint = "/create";
+          break;
         }
-
-        // Fire the initial string payload through to the correct controller endpoint
-        restTemplate.exchange(SERVICE + endpoint, HttpMethod.POST, userEntity, String.class);
+      case "update":
+        {
+          endpoint = "/update";
+          break;
+        }
+      case "delete":
+        {
+          endpoint = "/delete";
+          break;
+        }
+      default:
+        {
+          endpoint = "/error";
+        }
     }
+
+    // Fire the initial string payload through to the correct controller endpoint
+    restTemplate.exchange(SERVICE + endpoint, HttpMethod.POST, userEntity, String.class);
+  }
 }

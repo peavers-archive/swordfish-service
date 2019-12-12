@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.node.service.listener;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,28 +16,24 @@ import space.swordfish.node.service.services.DownloadService;
 @EnableSqs
 public class QueueListener {
 
-    @Autowired
-    private DownloadService downloadService;
+  @Autowired private DownloadService downloadService;
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private NotificationService notificationService;
+  @Autowired private NotificationService notificationService;
 
-    @MessageMapping("${aws.channel}")
-    public void instanceCommandHandler(String payload) {
-        Snapshot snapshot = jsonTransformService.read(Snapshot.class, payload);
+  @MessageMapping("${aws.channel}")
+  public void instanceCommandHandler(String payload) {
+    Snapshot snapshot = jsonTransformService.read(Snapshot.class, payload);
 
-        if (downloadService.writeSnapshot(downloadService.downloadSnapshot(snapshot), snapshot) != null) {
-            notificationService.send("restore_event", "download_success",
-                    jsonTransformService.write(snapshot));
+    if (downloadService.writeSnapshot(downloadService.downloadSnapshot(snapshot), snapshot)
+        != null) {
+      notificationService.send(
+          "restore_event", "download_success", jsonTransformService.write(snapshot));
 
-        } else {
-            notificationService.send("restore_event", "download_error",
-                    jsonTransformService.write(snapshot));
-        }
-
+    } else {
+      notificationService.send(
+          "restore_event", "download_error", jsonTransformService.write(snapshot));
     }
-
+  }
 }

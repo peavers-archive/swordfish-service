@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.controller;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,25 +17,21 @@ import space.swordfish.user.service.repositoriy.UserRepository;
 @RequestMapping("/teams")
 public class TeamQueryController {
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private TeamRepository teamRepository;
+  @Autowired private TeamRepository teamRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @GetMapping()
-    public String findAll() {
-        return jsonTransformService.writeList(teamRepository.findAll());
-    }
+  @GetMapping()
+  public String findAll() {
+    return jsonTransformService.writeList(teamRepository.findAll());
+  }
 
-    @GetMapping("/{id}")
-    public String findById(@PathVariable String id) {
-        Team team = teamRepository.findById(id);
+  @GetMapping("/{id}")
+  public String findById(@PathVariable String id) {
+    Team team = teamRepository.findById(id);
 
-
-        return jsonTransformService.write(team);
-    }
+    return jsonTransformService.write(team);
+  }
 }

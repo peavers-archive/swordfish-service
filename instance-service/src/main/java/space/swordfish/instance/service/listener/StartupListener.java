@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.instance.service.listener;
 
 import com.amazonaws.services.sqs.AmazonSQSAsync;
@@ -12,22 +13,19 @@ import org.springframework.stereotype.Service;
 @Service
 class StartupListener {
 
-    private final AmazonSQSAsync amazonSQSAsync;
+  private final AmazonSQSAsync amazonSQSAsync;
 
-    @Value("${queues.instanceEvents}")
-    private String events;
+  @Value("${queues.instanceEvents}")
+  private String events;
 
-    @Autowired
-    public StartupListener(AmazonSQSAsync amazonSQSAsync) {
-        this.amazonSQSAsync = amazonSQSAsync;
-    }
+  @Autowired
+  public StartupListener(AmazonSQSAsync amazonSQSAsync) {
+    this.amazonSQSAsync = amazonSQSAsync;
+  }
 
-    /**
-     * Make sure we've got all the queues we need
-     */
-    @EventListener(ApplicationReadyEvent.class)
-    public void buildQueues() {
-        amazonSQSAsync.createQueue(events);
-    }
-
+  /** Make sure we've got all the queues we need */
+  @EventListener(ApplicationReadyEvent.class)
+  public void buildQueues() {
+    amazonSQSAsync.createQueue(events);
+  }
 }

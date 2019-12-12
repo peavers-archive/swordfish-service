@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.restore.service.api.stack;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,27 +17,29 @@ import space.swordfish.restore.service.service.AuthenticatedRestTemplate;
 @Service
 public class SilverstripeStackImpl implements SilverstripeStack {
 
-    @Value("${silverstripe.dashHost}")
-    private String HOST;
+  @Value("${silverstripe.dashHost}")
+  private String HOST;
 
-    @Autowired
-    private AuthenticatedRestTemplate authenticatedRestTemplate;
+  @Autowired private AuthenticatedRestTemplate authenticatedRestTemplate;
 
-    @Override
-    public ResponseEntity<JsonNode> listAll() {
-        try {
-            return authenticatedRestTemplate.restTemplate().exchange(HOST + "s", HttpMethod.GET, null, JsonNode.class);
-        } catch (Exception e) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            ObjectNode jNode = objectMapper.createObjectNode();
+  @Override
+  public ResponseEntity<JsonNode> listAll() {
+    try {
+      return authenticatedRestTemplate
+          .restTemplate()
+          .exchange(HOST + "s", HttpMethod.GET, null, JsonNode.class);
+    } catch (Exception e) {
+      ObjectMapper objectMapper = new ObjectMapper();
+      ObjectNode jNode = objectMapper.createObjectNode();
 
-            return new ResponseEntity<JsonNode>(jNode, HttpStatus.OK);
-        }
+      return new ResponseEntity<JsonNode>(jNode, HttpStatus.OK);
     }
+  }
 
-    @Override
-    public ResponseEntity<JsonNode> view(String projectId) {
-        return authenticatedRestTemplate.restTemplate().exchange(HOST + "/{projectId}/", HttpMethod.GET, null,
-                JsonNode.class, projectId);
-    }
+  @Override
+  public ResponseEntity<JsonNode> view(String projectId) {
+    return authenticatedRestTemplate
+        .restTemplate()
+        .exchange(HOST + "/{projectId}/", HttpMethod.GET, null, JsonNode.class, projectId);
+  }
 }

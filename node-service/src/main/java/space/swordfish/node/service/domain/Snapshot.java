@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.node.service.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,15 +14,13 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Snapshot {
 
-    @Id
-    String id;
+  @Id String id;
 
-    String created;
-    String mode;
-    String size;
-    String stackId;
-    String channel;
+  String created;
+  String mode;
+  String size;
+  String stackId;
+  String channel;
 
-    @Links
-    com.github.jasminb.jsonapi.Links links;
+  @Links com.github.jasminb.jsonapi.Links links;
 }

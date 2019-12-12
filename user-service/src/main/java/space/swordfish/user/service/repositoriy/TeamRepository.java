@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.user.service.repositoriy;
 
 import org.springframework.data.repository.CrudRepository;
@@ -7,6 +8,5 @@ import space.swordfish.user.service.domain.Team;
 @RepositoryRestResource
 public interface TeamRepository extends CrudRepository<Team, String> {
 
-    Team findById(String id);
-
+  Team findById(String id);
 }

@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.edge.service.controller.user.service;
 
 import com.google.gson.GsonBuilder;
@@ -18,60 +19,62 @@ import space.swordfish.edge.service.domain.Team;
 @RestController
 public class TeamCommandGatewayRestController {
 
-    @Autowired
-    private JsonTransformService jsonTransformService;
+  @Autowired private JsonTransformService jsonTransformService;
 
-    @Autowired
-    private QueueMessagingTemplate queueMessagingTemplate;
+  @Autowired private QueueMessagingTemplate queueMessagingTemplate;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private AuthenticationService authenticationService;
 
-    @Value("${queues.teamEvents}")
-    private String queue;
+  @Value("${queues.teamEvents}")
+  private String queue;
 
-    @PostMapping("/teams")
-    public ResponseEntity<String> post(@RequestBody String payload) {
-        log.info(new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(payload)));
+  @PostMapping("/teams")
+  public ResponseEntity<String> post(@RequestBody String payload) {
+    log.info(
+        new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(payload)));
 
-        Team team = jsonTransformService.read(Team.class, payload);
-        team.setRequestToken(authenticationService.getCurrentToken());
+    Team team = jsonTransformService.read(Team.class, payload);
+    team.setRequestToken(authenticationService.getCurrentToken());
 
-        this.queueMessagingTemplate.send(queue, MessageBuilder.withPayload(jsonTransformService.write(team)).build());
+    this.queueMessagingTemplate.send(
+        queue, MessageBuilder.withPayload(jsonTransformService.write(team)).build());
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * This is just here to keep the EmberJS client happy. Just forwards the payload to the standard post method.
-     *
-     * @param payload String representing a User object
-     * @param id      String representing the ID of that user
-     * @return ResponseEntity OK
-     */
-    @PatchMapping("/teams/{id}")
-    public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
-        log.info(new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(payload)));
+  /**
+   * This is just here to keep the EmberJS client happy. Just forwards the payload to the standard
+   * post method.
+   *
+   * @param payload String representing a User object
+   * @param id String representing the ID of that user
+   * @return ResponseEntity OK
+   */
+  @PatchMapping("/teams/{id}")
+  public ResponseEntity<String> patch(@RequestBody String payload, @PathVariable("id") String id) {
+    log.info(
+        new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(payload)));
 
-        post(payload);
+    post(payload);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * This is just here to keep the EmberJS client happy. Just forwards the payload to the standard post method.
-     *
-     * @param id String representing the ID of that user
-     * @return ResponseEntity OK
-     */
-    @DeleteMapping("/teams/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        Team team = new Team();
-        team.setId(id);
-        team.setSwordfishCommand("delete");
+  /**
+   * This is just here to keep the EmberJS client happy. Just forwards the payload to the standard
+   * post method.
+   *
+   * @param id String representing the ID of that user
+   * @return ResponseEntity OK
+   */
+  @DeleteMapping("/teams/{id}")
+  public ResponseEntity<String> delete(@PathVariable("id") String id) {
+    Team team = new Team();
+    team.setId(id);
+    team.setSwordfishCommand("delete");
 
-        post(jsonTransformService.write(team));
+    post(jsonTransformService.write(team));
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }

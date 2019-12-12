@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.notification.service.services;
 
 import com.pusher.rest.Pusher;
@@ -7,11 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class PusherServiceImpl implements PusherService {
 
-    @Autowired
-    private Pusher pusher;
+  @Autowired private Pusher pusher;
 
-    @Override
-    public void push(String channel, String event, String message) {
-        pusher.trigger(channel, event, message);
-    }
+  @Override
+  public void push(String channel, String event, String message) {
+    pusher.trigger(channel, event, message);
+  }
 }

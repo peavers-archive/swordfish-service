@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.restore.service;
 
 import org.springframework.boot.SpringApplication;
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @SpringBootApplication
 public class RestoreServiceApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(RestoreServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(RestoreServiceApplication.class, args);
+  }
 }

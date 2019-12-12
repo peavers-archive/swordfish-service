@@ -1,5 +1,5 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.edge.service.controller.user.service;
-
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +17,29 @@ import space.swordfish.common.auth.services.AuthenticationService;
 @RestController
 public class UserQueryGatewayRestController {
 
-    private final static String SERVICE = "http://user-service/users";
+  private static final String SERVICE = "http://user-service/users";
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private AuthenticationService authenticationService;
 
-    @LoadBalanced
-    @Autowired
-    private RestTemplate restTemplate;
+  @LoadBalanced @Autowired private RestTemplate restTemplate;
 
-    @GetMapping("/users")
-    public ResponseEntity<String> users() {
-        ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
-        };
+  @GetMapping("/users")
+  public ResponseEntity<String> users() {
+    ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {};
 
-        return restTemplate.exchange(SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
-    }
+    return restTemplate.exchange(
+        SERVICE, HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference);
+  }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<String> userById(@PathVariable String id) {
-        ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {
-        };
+  @GetMapping("/users/{id}")
+  public ResponseEntity<String> userById(@PathVariable String id) {
+    ParameterizedTypeReference<String> reference = new ParameterizedTypeReference<String>() {};
 
-        return restTemplate.exchange(SERVICE + "/{id}", HttpMethod.GET, authenticationService.addAuthenticationHeader(), reference, id);
-    }
+    return restTemplate.exchange(
+        SERVICE + "/{id}",
+        HttpMethod.GET,
+        authenticationService.addAuthenticationHeader(),
+        reference,
+        id);
+  }
 }

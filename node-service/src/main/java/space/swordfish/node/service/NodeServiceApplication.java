@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package space.swordfish.node.service;
 
 import org.springframework.boot.SpringApplication;
@@ -9,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 public class NodeServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(NodeServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(NodeServiceApplication.class, args);
+  }
 }
